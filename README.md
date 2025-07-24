@@ -1,30 +1,38 @@
-# VoyaGenie design
+# ✈️ VoyaGenie – AI-Powered Travel Itinerary Planner
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+VoyaGenie is a smart travel assistant that takes one simple input from the user — like "Goa, 3 people, next weekend" — and generates a complete travel itinerary. It includes flights, hotels, places to visit, local food, and experiences, all powered by real-time data and AI.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/asmitabanerjee106-4990s-projects/v0-voya-genie-design)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/hyAUmwRAd30)
+---
 
-## Overview
+## 🌟 Features
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+- 🧠 One-line trip planning using NLP
+- ✈️ Flight suggestions (via API)
+- 🏨 Hotel search with filters and booking options
+- 📍 Must-visit spots and local experiences
+- 🍽️ Food, culture, and adventure recommendations
+- 🌦️ Real-time weather integration
+- 🗺️ Interactive map view (Leaflet + OpenStreetMap)
+- 💾 Save and export journey plans
+- 💱 Currency & language converter
+- 🖼️ Destination image gallery using Pexels API
 
-## Deployment
+---
 
-Your project is live at:
+## ⚙️ Tech Stack
 
-**[https://vercel.com/asmitabanerjee106-4990s-projects/v0-voya-genie-design](https://vercel.com/asmitabanerjee106-4990s-projects/v0-voya-genie-design)**
+- **Frontend:** Next.js, Tailwind CSS, React
+- **Backend:** Node.js / Express or Python (FastAPI)
+- **AI/NLP:** OpenAI GPT-4o, LangChain
+- **Maps & Places:** Leaflet.js, Geoapify
+- **Images:** Pexels API
+- **Hotels/Flights:** Amadeus API / Booking APIs
+- **Weather:** OpenWeatherMap API
+- **Deployment:** Vercel
 
-## Build your app
+---
 
-Continue building your app on:
+## 🔑 Environment Variables
 
-**[https://v0.dev/chat/projects/hyAUmwRAd30](https://v0.dev/chat/projects/hyAUmwRAd30)**
+Create a `.env.local` file in the root:
 
-## How It Works
-
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
