@@ -400,11 +400,11 @@ export default function VoyaGenieApp() {
 
       // Fallback weather data
       setWeatherData([
-        { day: "Today", temp: "25°C", icon: Sun, desc: "Sunny" },
-        { day: "Tomorrow", temp: "23°C", icon: Cloud, desc: "Partly Cloudy" },
-        { day: "Wed", temp: "21°C", icon: CloudRain, desc: "Light Rain" },
-        { day: "Thu", temp: "27°C", icon: Sun, desc: "Hot & Sunny" },
-        { day: "Fri", temp: "24°C", icon: Cloud, desc: "Warm & Cloudy" },
+        { day: "Today", temp: "--", icon: Sun, desc: "--" },
+        { day: "Tomorrow", temp: "--", icon: Cloud, desc: "--" },
+        { day: "Wed", temp: "--", icon: CloudRain, desc: "--" },
+        { day: "Thu", temp: "--", icon: Sun, desc: "--" },
+        { day: "Fri", temp: "--", icon: Cloud, desc: "--" },
       ]);
     } finally {
       setIsLoadingWeather(false);

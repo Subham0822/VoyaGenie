@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "VoyaGenie",
   description: "Your AI-powered travel assistant",
   generator: "VoyaGenie",
+  icons: {
+    icon: "https://cdn-icons-png.flaticon.com/512/744/744922.png",
+  },
 }
 
 export default function RootLayout({
