@@ -534,6 +534,12 @@ export default function VoyaGenieApp() {
     setPlacesError("")
 
     try {
+      const coords = await getLocationCoordinates(location)
+      if (!coords) {
+        throw new Error("Could not get coordinates for location")
+      }
+
+      setDestinationCoords(coords)
       const prompt = `Generate a list of 6-8 popular tourist places in ${location} in JSON format.
 
   Return ONLY a valid JSON array with this structure:
@@ -546,8 +552,16 @@ export default function VoyaGenieApp() {
       "rating": 4.7
     }
   ]
+    Include a mix of famous spots and hidden gems, with varied categories.`
+    // Calculate bounding box for Geoapify API (example: 0.05 deg offset)
+      const latOffset = 0.05
+      const lngOffset = 0.05
+      const minLat = coords.lat - latOffset
+      const maxLat = coords.lat + latOffset
+      const minLng = coords.lng - lngOffset
+      const maxLng = coords.lng + lngOffset
 
-  Include a mix of famous spots and hidden gems, with varied categories.`
+  
 
       const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
       if (!apiKey) {
