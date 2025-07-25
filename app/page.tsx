@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
+  Navigation,
   MapPin,
   Search,
   Cloud,
@@ -122,6 +123,7 @@ export default function VoyaGenieApp() {
   // Gallery state for Pexels images
   const [galleryImages, setGalleryImages] = useState<any[]>([])
   const [destination, setDestination] = useState("")
+  const [fromLocation, setFromLocation] = useState("")
   const [travelDates, setTravelDates] = useState("")
   const [duration, setDuration] = useState("")
   useEffect(() => {
@@ -198,7 +200,7 @@ export default function VoyaGenieApp() {
   }
 
   const handleDestinationSubmit = () => {
-    if (destination.trim() && (travelDates.trim() || duration.trim()) && budget.trim()) {
+    if (fromLocation.trim() && destination.trim() && (travelDates.trim() || duration.trim()) && budget.trim()) {
       setCurrentScreen("destination")
     }
   }
@@ -526,103 +528,90 @@ export default function VoyaGenieApp() {
     }
   }
 
-  // Fetch Places Data using Foursquare API
+  // Fetch Places Data using Gemini AI
   const fetchPlacesData = async (location: string) => {
     setIsLoadingPlaces(true)
     setPlacesError("")
 
     try {
-      const coords = await getLocationCoordinates(location)
-      if (!coords) {
-        throw new Error("Could not get coordinates for location")
-      }
+      const prompt = `Generate a list of 6-8 popular tourist places in ${location} in JSON format.
 
-      setDestinationCoords(coords)
+  Return ONLY a valid JSON array with this structure:
+  [
+    {
+      "name": "Place Name",
+      "category": "Attraction Category (e.g., Historical Site, Park, Beach)",
+      "description": "Brief description of the place",
+      "address": "Exact or nearby address",
+      "rating": 4.7
+    }
+  ]
 
-      // Calculate bounding box for Geoapify API (example: 0.05 deg offset)
-      const latOffset = 0.05
-      const lngOffset = 0.05
-      const minLat = coords.lat - latOffset
-      const maxLat = coords.lat + latOffset
-      const minLng = coords.lng - lngOffset
-      const maxLng = coords.lng + lngOffset
+  Include a mix of famous spots and hidden gems, with varied categories.`
 
-      // Geoapify Places API
-      const apiKey = process.env.NEXT_PUBLIC_GEOAPIFY1_API_KEY as string
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
       if (!apiKey) {
-        throw new Error("Geoapify API key missing. Please set NEXT_PUBLIC_GEOAPIFY1_API_KEY in your .env file.")
-      }
-      const url = `https://api.geoapify.com/v2/places?categories=commercial.supermarket&filter=rect:${minLng},${maxLat},${maxLng},${minLat}&limit=20&apiKey=${apiKey}`
-      const response = await fetch(url)
-
-      if (!response.ok) {
-        throw new Error("Places API request failed")
+        setPlacesError("Google Generative AI API key is missing.")
+        setIsLoadingPlaces(false)
+        return
       }
 
-      const data = await response.json()
-      const formattedPlaces: Place[] = await Promise.all(
-        (data.features || []).slice(0, 12).map(async (feature: any) => {
-          const placeName = feature.properties.name || "Supermarket"
-          const placeImage = await fetchPhoto(`${placeName} ${location}`, placeName)
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
 
+      let jsonText = text.trim()
+      if (jsonText.startsWith("```json")) {
+        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "")
+      } else if (jsonText.startsWith("```")) {
+        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "")
+      }
+
+      let placesData: any[]
+      try {
+        placesData = JSON.parse(jsonText)
+      } catch (parseError) {
+        console.error("Places JSON parsing error:", parseError)
+        throw new Error("Unable to parse AI response.")
+      }
+
+      const validatedPlaces: Place[] = await Promise.all(
+        placesData.map(async (place: any, index: number) => {
+          const placeImage = await fetchPhoto(`${place.name || "place"} ${location}`, "landmark")
           return {
-            id: feature.properties.place_id || feature.properties.osm_id || feature.properties.name,
-            name: placeName,
-            category: feature.properties.categories?.[0] || "Supermarket",
-            address: feature.properties.formatted || feature.properties.address_line1 || "Address not available",
-            rating: undefined,
-            distance: undefined,
+            id: `${place.name || index}-${location}`,
+            name: place.name || `Place ${index + 1}`,
+            category: place.category || "Attraction",
+            address: place.address || `Famous site in ${location}`,
+            rating: typeof place.rating === "number" ? place.rating : 4.5,
             image: placeImage,
-            coordinates: feature.geometry?.coordinates
-              ? {
-                  lat: feature.geometry.coordinates[1],
-                  lng: feature.geometry.coordinates[0],
-                }
-              : undefined,
           }
         }),
       )
 
-      setPlaces(formattedPlaces.slice(0, 12)) // Limit to 12 places
+      setPlaces(validatedPlaces)
+      setPlacesError("")
     } catch (error) {
       console.error("Places fetch error:", error)
-      setPlacesError("Unable to fetch places data")
+      setPlacesError("Unable to fetch place recommendations")
 
-      // Fallback to mock data
-      const mockPlaces: Place[] = [
+      // Optional fallback
+      setPlaces([
         {
           id: "1",
-          name: `Golden Temple - ${location}`,
-          category: "Religious Site",
-          address: `Temple Street, ${location}`,
-          rating: 4.8,
-          distance: "2km away",
-          image: "/placeholder.svg?height=200&width=300&text=Golden+Temple",
-        },
-        {
-          id: "2",
-          name: `Sunset Beach - ${location}`,
-          category: "Beach",
-          address: `Coastal Road, ${location}`,
-          rating: 4.9,
-          distance: "5km away",
-          image: "/placeholder.svg?height=200&width=300&text=Sunset+Beach",
-        },
-        {
-          id: "3",
-          name: `Heritage Museum - ${location}`,
-          category: "Museum",
-          address: `Museum Quarter, ${location}`,
+          name: `Popular Site - ${location}`,
+          category: "Sightseeing",
+          address: `Main attraction in ${location}`,
           rating: 4.6,
-          distance: "3km away",
-          image: "/placeholder.svg?height=200&width=300&text=Heritage+Museum",
+          image: "/placeholder.svg?height=200&width=300&text=Popular+Place",
         },
-      ]
-      setPlaces(mockPlaces)
+      ])
     } finally {
       setIsLoadingPlaces(false)
     }
   }
+
 
   // Fetch Cuisines Data using Gemini AI
   const fetchCuisinesData = async (location: string) => {
@@ -1437,6 +1426,21 @@ VoyaGenie Team
                 <p className="text-amber-700 text-lg">Tell us about your dream trip and we'll make it magical!</p>
               </CardHeader>
               <CardContent className="p-8 space-y-8">
+                {/* From Location Input */}
+                <div className="space-y-3">
+                  <label className="text-lg font-semibold text-amber-900 flex items-center gap-2">
+                    <Navigation className="h-5 w-5" />
+                    Where are you starting from? 🏠
+                  </label>
+                  <div className="relative">
+                    <Input
+                      placeholder="Enter your departure city (e.g., Mumbai, Delhi, Bangalore)..."
+                      value={fromLocation}
+                      onChange={(e) => setFromLocation(e.target.value)}
+                      className="py-4 text-lg rounded-2xl border-2 border-orange-200 focus:border-orange-400 bg-white pl-4"
+                    />
+                  </div>
+                </div>
                 {/* Destination Input */}
                 <div className="space-y-3">
                   <label className="text-lg font-semibold text-amber-900 flex items-center gap-2">
@@ -1619,11 +1623,19 @@ VoyaGenie Team
                 <div className="pt-6">
                   <Button
                     onClick={handleDestinationSubmit}
-                    disabled={!destination.trim() || (!travelDates.trim() && !duration.trim()) || !budget.trim()}
+                    disabled={
+                      !destination.trim() ||
+                      !fromLocation.trim() ||
+                      (!travelDates.trim() && !duration.trim()) ||
+                      !budget.trim()
+                    }
                     className="w-full py-6 text-xl rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       background:
-                        destination.trim() && (travelDates.trim() || duration.trim()) && budget.trim()
+                        destination.trim() &&
+                        fromLocation.trim() &&
+                        (travelDates.trim() || duration.trim()) &&
+                        budget.trim()
                           ? "linear-gradient(135deg, #FF8A65 0%, #FF7043 50%, #FF5722 100%)"
                           : "linear-gradient(135deg, #FFCC80 0%, #FFB74D 100%)",
                       boxShadow: "0 8px 32px rgba(255, 87, 34, 0.3)",
@@ -1636,6 +1648,11 @@ VoyaGenie Team
 
                 {/* Progress Indicator */}
                 <div className="flex justify-center space-x-2 pt-4">
+                  <div
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      fromLocation.trim() ? "bg-orange-500" : "bg-orange-200"
+                    }`}
+                  />
                   <div
                     className={`w-3 h-3 rounded-full transition-all ${
                       destination.trim() ? "bg-orange-500" : "bg-orange-200"
