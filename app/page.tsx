@@ -1,17 +1,12 @@
-"use client";
+"use client"
 
-import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useState, useRef, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   MapPin,
   Search,
@@ -28,128 +23,123 @@ import {
   Filter,
   Calendar,
   ThermometerSun,
-  Gift,
   ArrowLeft,
   Sparkles,
-  Camera,
-  Heart,
   Loader2,
   MapIcon,
   Phone,
-} from "lucide-react";
-import MapComponent from "@/components/map-component";
+  Heart,
+  Gift,
+  Camera,
+} from "lucide-react"
+import MapComponent from "@/components/map-component"
 // import { generateText } from "ai";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai"
 
 // Types for API responses
 interface WeatherData {
-  day: string;
-  temp: string;
-  icon: any;
-  desc: string;
+  day: string
+  temp: string
+  icon: any
+  desc: string
 }
 
 interface Hotel {
-  id: string;
-  name: string;
-  price: string;
-  rating?: number;
-  image: string;
-  amenities: string[];
-  address?: string;
-  phone?: string;
+  id: string
+  name: string
+  price: string
+  rating?: number
+  image: string
+  amenities: string[]
+  address?: string
+  phone?: string
 }
 
 interface Place {
-  id: string;
-  name: string;
-  category: string;
-  address: string;
-  rating?: number;
-  distance?: string;
-  coordinates?: { lat: number; lng: number };
-  image?: string;
+  id: string
+  name: string
+  category: string
+  address: string
+  rating?: number
+  distance?: string
+  coordinates?: { lat: number; lng: number }
+  image?: string
 }
 
 interface Cuisine {
-  name: string;
-  rating: number;
-  image: string;
-  tags: string[];
-  description?: string;
-  restaurant?: string;
-  price?: string;
+  name: string
+  rating: number
+  image: string
+  tags: string[]
+  description?: string
+  restaurant?: string
+  price?: string
 }
 
 interface Adventure {
-  name: string;
-  difficulty: string;
-  duration: string;
-  image: string;
-  description?: string;
-  price?: string;
-  bestTime?: string;
+  name: string
+  difficulty: string
+  duration: string
+  image: string
+  description?: string
+  price?: string
+  bestTime?: string
 }
 
 interface HistoryContent {
-  title: string;
-  content: string;
-  period?: string;
-  significance?: string;
-  image?: string;
+  title: string
+  content: string
+  period?: string
+  significance?: string
+  image?: string
 }
 
 interface SurpriseContent {
-  title: string;
-  place: string;
-  description: string;
-  tip: string;
-  image: string;
-  category?: string;
-  bestTime?: string;
+  title: string
+  place: string
+  description: string
+  tip: string
+  image: string
+  category?: string
+  bestTime?: string
 }
 
 export default function VoyaGenieApp() {
   // Fetch images from Pexels API
   const fetchImagesFromPexels = async (query: string) => {
-    const apiKey = process.env.NEXT_PUBLIC_PEXELS_API_KEY as string;
-    if (!apiKey) return [];
-    const response = await fetch(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(
-        query
-      )}&per_page=10`,
-      {
-        headers: {
-          Authorization: apiKey,
-        },
-      }
-    );
-    if (!response.ok) return [];
-    const data = await response.json();
-    return data.photos || [];
-  };
+    const apiKey = process.env.NEXT_PUBLIC_PEXELS_API_KEY as string
+    if (!apiKey) return []
+    const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=10`, {
+      headers: {
+        Authorization: apiKey,
+      },
+    })
+    if (!response.ok) return []
+    const data = await response.json()
+    return data.photos || []
+  }
 
   // Gallery state for Pexels images
-  const [galleryImages, setGalleryImages] = useState<any[]>([]);
-  const [destination, setDestination] = useState("");
-  const [travelDates, setTravelDates] = useState("");
-  const [duration, setDuration] = useState("");
+  const [galleryImages, setGalleryImages] = useState<any[]>([])
+  const [destination, setDestination] = useState("")
+  const [travelDates, setTravelDates] = useState("")
+  const [duration, setDuration] = useState("")
   useEffect(() => {
     const loadImages = async () => {
       if (destination) {
-        const results = await fetchImagesFromPexels(destination);
-        setGalleryImages(results);
+        const results = await fetchImagesFromPexels(destination)
+        setGalleryImages(results)
       }
-    };
-    loadImages();
-  }, [destination]);
-  const [dateType, setDateType] = useState("dates");
-  const [travelers, setTravelers] = useState({ adults: 2, children: 0 });
-  const [budget, setBudget] = useState("");
-  const [currentScreen, setCurrentScreen] = useState("landing");
-  const [showSurprisePopup, setShowSurprisePopup] = useState(false);
-  const [showMapModal, setShowMapModal] = useState(false);
-  const destinationRef = useRef<HTMLDivElement>(null);
+    }
+    loadImages()
+  }, [destination])
+  const [dateType, setDateType] = useState("dates")
+  const [travelers, setTravelers] = useState({ adults: 2, children: 0 })
+  const [budget, setBudget] = useState("")
+  const [currentScreen, setCurrentScreen] = useState("landing")
+  const [showSurprisePopup, setShowSurprisePopup] = useState(false)
+  const [showMapModal, setShowMapModal] = useState(false)
+  const destinationRef = useRef<HTMLDivElement>(null)
 
   // API Data States
   const [weatherData, setWeatherData] = useState<WeatherData[]>([
@@ -158,133 +148,122 @@ export default function VoyaGenieApp() {
     { day: "Wed", temp: "24°C", icon: CloudRain, desc: "Light Rain" },
     { day: "Thu", temp: "30°C", icon: Sun, desc: "Hot & Sunny" },
     { day: "Fri", temp: "27°C", icon: Cloud, desc: "Warm & Cloudy" },
-  ]);
-  const [hotels, setHotels] = useState<Hotel[]>([]);
-  const [places, setPlaces] = useState<Place[]>([]);
-  const [cuisines, setCuisines] = useState<Cuisine[]>([]);
-  const [adventures, setAdventures] = useState<Adventure[]>([]);
-  const [historyContent, setHistoryContent] = useState<HistoryContent[]>([]);
-  const [surpriseContent, setSurpriseContent] =
-    useState<SurpriseContent | null>(null);
+  ])
+  const [hotels, setHotels] = useState<Hotel[]>([])
+  const [places, setPlaces] = useState<Place[]>([])
+  const [cuisines, setCuisines] = useState<Cuisine[]>([])
+  const [adventures, setAdventures] = useState<Adventure[]>([])
+  const [historyContent, setHistoryContent] = useState<HistoryContent[]>([])
+  const [surpriseContent, setSurpriseContent] = useState<SurpriseContent | null>(null)
 
-  type Coordinate = { lat: number; lng: number };
-  const [destinationCoords, setDestinationCoords] = useState<Coordinate | null>(
-    null
-  );
+  type Coordinate = { lat: number; lng: number }
+  const [destinationCoords, setDestinationCoords] = useState<Coordinate | null>(null)
 
   // Loading States
-  const [isLoadingWeather, setIsLoadingWeather] = useState(false);
-  const [isLoadingHotels, setIsLoadingHotels] = useState(false);
-  const [isLoadingPlaces, setIsLoadingPlaces] = useState(false);
-  const [isLoadingCuisines, setIsLoadingCuisines] = useState(false);
-  const [isLoadingAdventures, setIsLoadingAdventures] = useState(false);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-  const [isLoadingSurprise, setIsLoadingSurprise] = useState(false);
+  const [isLoadingWeather, setIsLoadingWeather] = useState(false)
+  const [isLoadingHotels, setIsLoadingHotels] = useState(false)
+  const [isLoadingPlaces, setIsLoadingPlaces] = useState(false)
+  const [isLoadingCuisines, setIsLoadingCuisines] = useState(false)
+  const [isLoadingAdventures, setIsLoadingAdventures] = useState(false)
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+  const [isLoadingSurprise, setIsLoadingSurprise] = useState(false)
 
-  const [weatherError, setWeatherError] = useState("");
-  const [hotelsError, setHotelsError] = useState("");
-  const [placesError, setPlacesError] = useState("");
-  const [cuisinesError, setCuisinesError] = useState("");
-  const [adventuresError, setAdventuresError] = useState("");
-  const [historyError, setHistoryError] = useState("");
-  const [surpriseError, setSurpriseError] = useState("");
+  const [weatherError, setWeatherError] = useState("")
+  const [hotelsError, setHotelsError] = useState("")
+  const [placesError, setPlacesError] = useState("")
+  const [cuisinesError, setCuisinesError] = useState("")
+  const [adventuresError, setAdventuresError] = useState("")
+  const [historyError, setHistoryError] = useState("")
+  const [surpriseError, setSurpriseError] = useState("")
 
-  const [generatedItinerary, setGeneratedItinerary] = useState<any>(null);
-  const [isGeneratingItinerary, setIsGeneratingItinerary] = useState(false);
-  const [itineraryError, setItineraryError] = useState("");
+  const [generatedItinerary, setGeneratedItinerary] = useState<any>(null)
+  const [isGeneratingItinerary, setIsGeneratingItinerary] = useState(false)
+  const [itineraryError, setItineraryError] = useState("")
+
+  const [showConvertModal, setShowConvertModal] = useState(false)
+  const [exchangeRates, setExchangeRates] = useState<any>(null)
+  const [isLoadingRates, setIsLoadingRates] = useState(false)
+  const [selectedFromCurrency, setSelectedFromCurrency] = useState("USD")
+  const [selectedToCurrency, setSelectedToCurrency] = useState("INR")
+  const [amountToConvert, setAmountToConvert] = useState("")
+  const [convertedAmount, setConvertedAmount] = useState("")
+  const [textToTranslate, setTextToTranslate] = useState("")
+  const [translatedText, setTranslatedText] = useState("")
+  const [isTranslating, setIsTranslating] = useState(false)
+  const [fromLanguage, setFromLanguage] = useState("en")
+  const [toLanguage, setToLanguage] = useState("hi")
 
   const scrollToDestination = () => {
-    destinationRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+    destinationRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
   const handleDestinationSubmit = () => {
-    if (
-      destination.trim() &&
-      (travelDates.trim() || duration.trim()) &&
-      budget.trim()
-    ) {
-      setCurrentScreen("destination");
+    if (destination.trim() && (travelDates.trim() || duration.trim()) && budget.trim()) {
+      setCurrentScreen("destination")
     }
-  };
+  }
 
   const adjustTravelers = (type: "adults" | "children", increment: boolean) => {
     setTravelers((prev) => ({
       ...prev,
-      [type]: increment
-        ? prev[type] + 1
-        : Math.max(type === "adults" ? 1 : 0, prev[type] - 1),
-    }));
-  };
+      [type]: increment ? prev[type] + 1 : Math.max(type === "adults" ? 1 : 0, prev[type] - 1),
+    }))
+  }
 
   // Fetch photos from Unsplash API
   // Fetch photo from Pexels API (single image for cards, fallback to placeholder)
   const fetchPhoto = async (query: string, fallbackText = "travel") => {
     try {
-      const apiKey = process.env.NEXT_PUBLIC_PEXELS_API_KEY as string;
+      const apiKey = process.env.NEXT_PUBLIC_PEXELS_API_KEY as string
       if (!apiKey) {
-        throw new Error("Pexels API key missing");
+        throw new Error("Pexels API key missing")
       }
-      const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(
-          query
-        )}&per_page=1`,
-        {
-          headers: {
-            Authorization: apiKey,
-          },
-        }
-      );
+      const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1`, {
+        headers: {
+          Authorization: apiKey,
+        },
+      })
       if (!response.ok) {
-        throw new Error("Photo fetch failed");
+        throw new Error("Photo fetch failed")
       }
-      const data = await response.json();
+      const data = await response.json()
       if (data.photos && data.photos.length > 0) {
-        return (
-          data.photos[0].src?.large ||
-          data.photos[0].src?.medium ||
-          data.photos[0].src?.original
-        );
+        return data.photos[0].src?.large || data.photos[0].src?.medium || data.photos[0].src?.original
       } else {
         // Fallback to placeholder if no results
-        return `/placeholder.svg?height=200&width=300&text=${encodeURIComponent(
-          fallbackText
-        )}`;
+        return `/placeholder.svg?height=200&width=300&text=${encodeURIComponent(fallbackText)}`
       }
     } catch (error) {
-      console.error("Error fetching photo:", error);
+      console.error("Error fetching photo:", error)
       // Return placeholder image if API fails
-      return `/placeholder.svg?height=200&width=300&text=${encodeURIComponent(
-        fallbackText
-      )}`;
+      return `/placeholder.svg?height=200&width=300&text=${encodeURIComponent(fallbackText)}`
     }
-  };
+  }
 
   // Get coordinates for a location
   const getLocationCoordinates = async (location: string) => {
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          location
-        )}&limit=1`
-      );
-      const data = await response.json();
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}&limit=1`,
+      )
+      const data = await response.json()
       if (data && data.length > 0) {
         return {
           lat: Number.parseFloat(data[0].lat),
           lng: Number.parseFloat(data[0].lon),
-        };
+        }
       }
-      return null;
+      return null
     } catch (error) {
-      console.error("Error getting coordinates:", error);
-      return null;
+      console.error("Error getting coordinates:", error)
+      return null
     }
-  };
+  }
 
   // Fetch Weather Data using Gemini AI
   const fetchWeatherData = async (location: string) => {
-    setIsLoadingWeather(true);
-    setWeatherError("");
+    setIsLoadingWeather(true)
+    setWeatherError("")
 
     try {
       const prompt = `Generate a 5-day weather forecast for ${location} in JSON format.
@@ -307,50 +286,41 @@ export default function VoyaGenieApp() {
 
     Include realistic temperatures for ${location}'s current season.
     Use conditions: "sunny", "cloudy", "rainy", "stormy" for proper icons.
-    Make the forecast realistic and location-appropriate.`;
+    Make the forecast realistic and location-appropriate.`
 
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
       if (!apiKey) {
         setWeatherError(
-          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file."
-        );
-        setIsLoadingWeather(false);
-        return;
+          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file.",
+        )
+        setIsLoadingWeather(false)
+        return
       }
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
 
-      let jsonText = text.trim();
+      let jsonText = text.trim()
       if (jsonText.startsWith("```json")) {
-        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "")
       } else if (jsonText.startsWith("```")) {
-        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "")
       }
 
       const getWeatherIcon = (condition: string) => {
-        const lowerCondition = condition.toLowerCase();
-        if (lowerCondition.includes("sun") || lowerCondition.includes("clear"))
-          return Sun;
-        if (
-          lowerCondition.includes("rain") ||
-          lowerCondition.includes("drizzle")
-        )
-          return CloudRain;
-        if (
-          lowerCondition.includes("cloud") ||
-          lowerCondition.includes("overcast")
-        )
-          return Cloud;
-        return Sun;
-      };
+        const lowerCondition = condition.toLowerCase()
+        if (lowerCondition.includes("sun") || lowerCondition.includes("clear")) return Sun
+        if (lowerCondition.includes("rain") || lowerCondition.includes("drizzle")) return CloudRain
+        if (lowerCondition.includes("cloud") || lowerCondition.includes("overcast")) return Cloud
+        return Sun
+      }
 
-      let weatherResponse: any[];
+      let weatherResponse: any[]
       try {
-        weatherResponse = JSON.parse(jsonText);
+        weatherResponse = JSON.parse(jsonText)
       } catch (parseError) {
-        console.error("Weather JSON parsing error:", parseError);
+        console.error("Weather JSON parsing error:", parseError)
         // Fallback weather data
         weatherResponse = [
           { day: "Today", temp: "25°C", condition: "sunny", desc: "Sunny" },
@@ -368,35 +338,33 @@ export default function VoyaGenieApp() {
             condition: "cloudy",
             desc: "Warm & Cloudy",
           },
-        ];
+        ]
       }
 
-      const formattedWeatherData: WeatherData[] = weatherResponse.map(
-        (day: any, index: number) => ({
-          day: day.day || `Day ${index + 1}`,
-          temp: day.temp || "N/A",
-          icon: getWeatherIcon(day.condition || day.desc || "sunny"),
-          desc: day.desc || "Weather info",
-        })
-      );
+      const formattedWeatherData: WeatherData[] = weatherResponse.map((day: any, index: number) => ({
+        day: day.day || `Day ${index + 1}`,
+        temp: day.temp || "N/A",
+        icon: getWeatherIcon(day.condition || day.desc || "sunny"),
+        desc: day.desc || "Weather info",
+      }))
 
       // Ensure we have exactly 5 days
       while (formattedWeatherData.length < 5) {
-        const remainingIndex = formattedWeatherData.length;
-        const dayNames = ["Today", "Tomorrow", "Wed", "Thu", "Fri"];
+        const remainingIndex = formattedWeatherData.length
+        const dayNames = ["Today", "Tomorrow", "Wed", "Thu", "Fri"]
         formattedWeatherData.push({
           day: dayNames[remainingIndex] || `Day ${remainingIndex + 1}`,
           temp: "N/A",
           icon: Cloud,
           desc: "Data unavailable",
-        });
+        })
       }
 
-      setWeatherData(formattedWeatherData.slice(0, 5));
-      setWeatherError("");
+      setWeatherData(formattedWeatherData.slice(0, 5))
+      setWeatherError("")
     } catch (error) {
-      console.error("Weather fetch error:", error);
-      setWeatherError("Unable to fetch weather data");
+      console.error("Weather fetch error:", error)
+      setWeatherError("Unable to fetch weather data")
 
       // Fallback weather data
       setWeatherData([
@@ -405,16 +373,16 @@ export default function VoyaGenieApp() {
         { day: "Wed", temp: "--", icon: CloudRain, desc: "--" },
         { day: "Thu", temp: "--", icon: Sun, desc: "--" },
         { day: "Fri", temp: "--", icon: Cloud, desc: "--" },
-      ]);
+      ])
     } finally {
-      setIsLoadingWeather(false);
+      setIsLoadingWeather(false)
     }
-  };
+  }
 
   // Fetch Hotels Data using Gemini AI
   const fetchHotelsData = async (location: string) => {
-    setIsLoadingHotels(true);
-    setHotelsError("");
+    setIsLoadingHotels(true)
+    setHotelsError("")
 
     try {
       const prompt = `Generate a list of 8-12 hotels for ${location} in JSON format. Include a mix of budget, mid-range, and luxury options. 
@@ -426,7 +394,7 @@ export default function VoyaGenieApp() {
         "name": "Hotel Name",
         "price": "₹X,XXX/night or $XXX/night",
         "rating": 4.5,
-        "amenities": ["Free WiFi", "Breakfast", "Pool", "Spa", "Gym"],
+        "amenities": ["Free WiFi", "Breakfast", "Pool", "Spa"],
         "address": "Street Address, ${location}",
         "phone": "+XX-XXXXXXXXXX"
       }
@@ -438,41 +406,41 @@ export default function VoyaGenieApp() {
     - Ratings between 3.5-4.9
     - Relevant amenities for the location
     - Proper addresses and phone numbers
-    - Mix of hotel types (boutique, resort, business, budget)`;
+    - Mix of hotel types (boutique, resort, business, budget)`
 
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
       if (!apiKey) {
         setHotelsError(
-          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file."
-        );
-        setIsLoadingHotels(false);
-        return;
+          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file.",
+        )
+        setIsLoadingHotels(false)
+        return
       }
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
 
       // Clean the response to extract JSON
-      let jsonText = text.trim();
+      let jsonText = text.trim()
 
       // Remove markdown code blocks if present
       if (jsonText.startsWith("```json")) {
         jsonText = jsonText
           .replace(/^```json\s*/, "")
           .replace(/\s*```json\s*/, "")
-          .replace(/\s*```$/, "");
+          .replace(/\s*```$/, "")
       } else if (jsonText.startsWith("```")) {
-        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "")
       }
 
       // Parse the JSON
-      let hotelsData: any[];
+      let hotelsData: any[]
       try {
-        hotelsData = JSON.parse(jsonText);
+        hotelsData = JSON.parse(jsonText)
       } catch (parseError) {
-        console.error("JSON parsing error:", parseError);
-        console.log("Raw response:", text);
+        console.error("JSON parsing error:", parseError)
+        console.log("Raw response:", text)
 
         // Fallback to mock data if JSON parsing fails
         hotelsData = [
@@ -503,38 +471,31 @@ export default function VoyaGenieApp() {
             address: `Main Street, ${location}`,
             phone: "+91-76543-21098",
           },
-        ];
+        ]
       }
 
       // Fetch images for each hotel and validate structure
       const validatedHotels: Hotel[] = await Promise.all(
         hotelsData.map(async (hotel: any, index: number) => {
-          const hotelImage = await fetchPhoto(
-            `${hotel.name || "hotel"} ${location}`,
-            "luxury hotel"
-          );
+          const hotelImage = await fetchPhoto(`${hotel.name || "hotel"} ${location}`, "luxury hotel")
           return {
             id: hotel.id || `hotel_${index + 1}`,
             name: hotel.name || `Hotel ${index + 1} - ${location}`,
             price: hotel.price || "Price on request",
             rating: typeof hotel.rating === "number" ? hotel.rating : 4.0,
             image: hotelImage,
-            amenities: Array.isArray(hotel.amenities)
-              ? hotel.amenities
-              : ["Free WiFi", "AC"],
+            amenities: Array.isArray(hotel.amenities) ? hotel.amenities : ["Free WiFi", "AC"],
             address: hotel.address || `${location}`,
             phone: hotel.phone || "Contact hotel directly",
-          };
-        })
-      );
+          }
+        }),
+      )
 
-      setHotels(validatedHotels.slice(0, 12)); // Limit to 12 hotels
-      setHotelsError("");
+      setHotels(validatedHotels.slice(0, 12)) // Limit to 12 hotels
+      setHotelsError("")
     } catch (error) {
-      console.error("Hotels fetch error:", error);
-      setHotelsError(
-        "Unable to fetch hotel recommendations. Please try again."
-      );
+      console.error("Hotels fetch error:", error)
+      setHotelsError("Unable to fetch hotel recommendations. Please try again.")
 
       // Set fallback mock data
       const fallbackHotels: Hotel[] = [
@@ -558,68 +519,57 @@ export default function VoyaGenieApp() {
           address: `Business District, ${location}`,
           phone: "+91-88776-65544",
         },
-      ];
-      setHotels(fallbackHotels);
+      ]
+      setHotels(fallbackHotels)
     } finally {
-      setIsLoadingHotels(false);
+      setIsLoadingHotels(false)
     }
-  };
+  }
 
   // Fetch Places Data using Foursquare API
   const fetchPlacesData = async (location: string) => {
-    setIsLoadingPlaces(true);
-    setPlacesError("");
+    setIsLoadingPlaces(true)
+    setPlacesError("")
 
     try {
-      const coords = await getLocationCoordinates(location);
+      const coords = await getLocationCoordinates(location)
       if (!coords) {
-        throw new Error("Could not get coordinates for location");
+        throw new Error("Could not get coordinates for location")
       }
 
-      setDestinationCoords(coords);
+      setDestinationCoords(coords)
 
       // Calculate bounding box for Geoapify API (example: 0.05 deg offset)
-      const latOffset = 0.05;
-      const lngOffset = 0.05;
-      const minLat = coords.lat - latOffset;
-      const maxLat = coords.lat + latOffset;
-      const minLng = coords.lng - lngOffset;
-      const maxLng = coords.lng + lngOffset;
+      const latOffset = 0.05
+      const lngOffset = 0.05
+      const minLat = coords.lat - latOffset
+      const maxLat = coords.lat + latOffset
+      const minLng = coords.lng - lngOffset
+      const maxLng = coords.lng + lngOffset
 
       // Geoapify Places API
-      const apiKey = process.env.NEXT_PUBLIC_GEOAPIFY1_API_KEY as string;
+      const apiKey = process.env.NEXT_PUBLIC_GEOAPIFY1_API_KEY as string
       if (!apiKey) {
-        throw new Error(
-          "Geoapify API key missing. Please set NEXT_PUBLIC_GEOAPIFY1_API_KEY in your .env file."
-        );
+        throw new Error("Geoapify API key missing. Please set NEXT_PUBLIC_GEOAPIFY1_API_KEY in your .env file.")
       }
-      const url = `https://api.geoapify.com/v2/places?categories=commercial.supermarket&filter=rect:${minLng},${maxLat},${maxLng},${minLat}&limit=20&apiKey=${apiKey}`;
-      const response = await fetch(url);
+      const url = `https://api.geoapify.com/v2/places?categories=commercial.supermarket&filter=rect:${minLng},${maxLat},${maxLng},${minLat}&limit=20&apiKey=${apiKey}`
+      const response = await fetch(url)
 
       if (!response.ok) {
-        throw new Error("Places API request failed");
+        throw new Error("Places API request failed")
       }
 
-      const data = await response.json();
+      const data = await response.json()
       const formattedPlaces: Place[] = await Promise.all(
         (data.features || []).slice(0, 12).map(async (feature: any) => {
-          const placeName = feature.properties.name || "Supermarket";
-          const placeImage = await fetchPhoto(
-            `${placeName} ${location}`,
-            placeName
-          );
+          const placeName = feature.properties.name || "Supermarket"
+          const placeImage = await fetchPhoto(`${placeName} ${location}`, placeName)
 
           return {
-            id:
-              feature.properties.place_id ||
-              feature.properties.osm_id ||
-              feature.properties.name,
+            id: feature.properties.place_id || feature.properties.osm_id || feature.properties.name,
             name: placeName,
             category: feature.properties.categories?.[0] || "Supermarket",
-            address:
-              feature.properties.formatted ||
-              feature.properties.address_line1 ||
-              "Address not available",
+            address: feature.properties.formatted || feature.properties.address_line1 || "Address not available",
             rating: undefined,
             distance: undefined,
             image: placeImage,
@@ -629,14 +579,14 @@ export default function VoyaGenieApp() {
                   lng: feature.geometry.coordinates[0],
                 }
               : undefined,
-          };
-        })
-      );
+          }
+        }),
+      )
 
-      setPlaces(formattedPlaces.slice(0, 12)); // Limit to 12 places
+      setPlaces(formattedPlaces.slice(0, 12)) // Limit to 12 places
     } catch (error) {
-      console.error("Places fetch error:", error);
-      setPlacesError("Unable to fetch places data");
+      console.error("Places fetch error:", error)
+      setPlacesError("Unable to fetch places data")
 
       // Fallback to mock data
       const mockPlaces: Place[] = [
@@ -667,17 +617,17 @@ export default function VoyaGenieApp() {
           distance: "3km away",
           image: "/placeholder.svg?height=200&width=300&text=Heritage+Museum",
         },
-      ];
-      setPlaces(mockPlaces);
+      ]
+      setPlaces(mockPlaces)
     } finally {
-      setIsLoadingPlaces(false);
+      setIsLoadingPlaces(false)
     }
-  };
+  }
 
   // Fetch Cuisines Data using Gemini AI
   const fetchCuisinesData = async (location: string) => {
-    setIsLoadingCuisines(true);
-    setCuisinesError("");
+    setIsLoadingCuisines(true)
+    setCuisinesError("")
 
     try {
       const prompt = `Generate a list of 6-8 popular local dishes and cuisines for ${location} in JSON format.
@@ -695,33 +645,33 @@ export default function VoyaGenieApp() {
       ]
 
       Focus on authentic local specialties, street food, and signature dishes of ${location}.
-      Include variety in cuisine types, spice levels, and price ranges.`;
+      Include variety in cuisine types, spice levels, and price ranges.`
 
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
       if (!apiKey) {
         setCuisinesError(
-          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file."
-        );
-        setIsLoadingCuisines(false);
-        return;
+          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file.",
+        )
+        setIsLoadingCuisines(false)
+        return
       }
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
 
-      let jsonText = text.trim();
+      let jsonText = text.trim()
       if (jsonText.startsWith("```json")) {
-        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "")
       } else if (jsonText.startsWith("```")) {
-        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "")
       }
 
-      let cuisinesData: any[];
+      let cuisinesData: any[]
       try {
-        cuisinesData = JSON.parse(jsonText);
+        cuisinesData = JSON.parse(jsonText)
       } catch (parseError) {
-        console.error("Cuisines JSON parsing error:", parseError);
+        console.error("Cuisines JSON parsing error:", parseError)
         cuisinesData = [
           {
             name: `Traditional ${location} Curry`,
@@ -739,34 +689,29 @@ export default function VoyaGenieApp() {
             restaurant: `Street Corner - ${location}`,
             price: "₹150",
           },
-        ];
+        ]
       }
 
       const validatedCuisines: Cuisine[] = await Promise.all(
         cuisinesData.map(async (cuisine: any, index: number) => {
-          const dishImage = await fetchPhoto(
-            `${cuisine.name || "food"} ${location}`,
-            "delicious food"
-          );
+          const dishImage = await fetchPhoto(`${cuisine.name || "food"} ${location}`, "delicious food")
           return {
             name: cuisine.name || `Local Dish ${index + 1}`,
             rating: typeof cuisine.rating === "number" ? cuisine.rating : 4.5,
             image: dishImage,
-            tags: Array.isArray(cuisine.tags)
-              ? cuisine.tags
-              : ["Local", "Popular"],
+            tags: Array.isArray(cuisine.tags) ? cuisine.tags : ["Local", "Popular"],
             description: cuisine.description || "Delicious local specialty",
             restaurant: cuisine.restaurant || `Local Restaurant - ${location}`,
             price: cuisine.price || "Price varies",
-          };
-        })
-      );
+          }
+        }),
+      )
 
-      setCuisines(validatedCuisines);
-      setCuisinesError("");
+      setCuisines(validatedCuisines)
+      setCuisinesError("")
     } catch (error) {
-      console.error("Cuisines fetch error:", error);
-      setCuisinesError("Unable to fetch cuisine recommendations");
+      console.error("Cuisines fetch error:", error)
+      setCuisinesError("Unable to fetch cuisine recommendations")
 
       // Fallback data
       setCuisines([
@@ -779,16 +724,16 @@ export default function VoyaGenieApp() {
           restaurant: `Heritage Kitchen - ${location}`,
           price: "₹400",
         },
-      ]);
+      ])
     } finally {
-      setIsLoadingCuisines(false);
+      setIsLoadingCuisines(false)
     }
-  };
+  }
 
   // Fetch Adventures Data using Gemini AI
   const fetchAdventuresData = async (location: string) => {
-    setIsLoadingAdventures(true);
-    setAdventuresError("");
+    setIsLoadingAdventures(true)
+    setAdventuresError("")
 
     try {
       const prompt = `Generate a list of 6-8 adventure activities and experiences for ${location} in JSON format.
@@ -806,33 +751,33 @@ export default function VoyaGenieApp() {
       ]
 
       Include variety like hiking, water sports, cultural experiences, wildlife, photography tours, etc.
-      Make activities specific to ${location}'s geography and attractions.`;
+      Make activities specific to ${location}'s geography and attractions.`
 
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
       if (!apiKey) {
         setAdventuresError(
-          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file."
-        );
-        setIsLoadingAdventures(false);
-        return;
+          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file.",
+        )
+        setIsLoadingAdventures(false)
+        return
       }
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
 
-      let jsonText = text.trim();
+      let jsonText = text.trim()
       if (jsonText.startsWith("```json")) {
-        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "")
       } else if (jsonText.startsWith("```")) {
-        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "")
       }
 
-      let adventuresData: any[];
+      let adventuresData: any[]
       try {
-        adventuresData = JSON.parse(jsonText);
+        adventuresData = JSON.parse(jsonText)
       } catch (parseError) {
-        console.error("Adventures JSON parsing error:", parseError);
+        console.error("Adventures JSON parsing error:", parseError)
         adventuresData = [
           {
             name: `${location} Hiking Trail`,
@@ -842,15 +787,12 @@ export default function VoyaGenieApp() {
             price: "₹800 per person",
             bestTime: "Early morning",
           },
-        ];
+        ]
       }
 
       const validatedAdventures: Adventure[] = await Promise.all(
         adventuresData.map(async (adventure: any, index: number) => {
-          const adventureImage = await fetchPhoto(
-            `${adventure.name || "adventure"} ${location}`,
-            "adventure activity"
-          );
+          const adventureImage = await fetchPhoto(`${adventure.name || "adventure"} ${location}`, "adventure activity")
           return {
             name: adventure.name || `Adventure ${index + 1}`,
             difficulty: adventure.difficulty || "Moderate",
@@ -859,15 +801,15 @@ export default function VoyaGenieApp() {
             description: adventure.description || "Exciting adventure activity",
             price: adventure.price || "Contact for pricing",
             bestTime: adventure.bestTime || "Depends on season",
-          };
-        })
-      );
+          }
+        }),
+      )
 
-      setAdventures(validatedAdventures);
-      setAdventuresError("");
+      setAdventures(validatedAdventures)
+      setAdventuresError("")
     } catch (error) {
-      console.error("Adventures fetch error:", error);
-      setAdventuresError("Unable to fetch adventure recommendations");
+      console.error("Adventures fetch error:", error)
+      setAdventuresError("Unable to fetch adventure recommendations")
 
       // Fallback data
       setAdventures([
@@ -880,16 +822,16 @@ export default function VoyaGenieApp() {
           price: "₹1200 per person",
           bestTime: "5:00 AM start",
         },
-      ]);
+      ])
     } finally {
-      setIsLoadingAdventures(false);
+      setIsLoadingAdventures(false)
     }
-  };
+  }
 
   // Fetch History Data using Gemini AI
   const fetchHistoryData = async (location: string) => {
-    setIsLoadingHistory(true);
-    setHistoryError("");
+    setIsLoadingHistory(true)
+    setHistoryError("")
 
     try {
       const prompt = `Generate historical information about ${location} in JSON format.
@@ -905,33 +847,33 @@ export default function VoyaGenieApp() {
       ]
 
       Include 3-4 major historical periods, events, or aspects of ${location}.
-      Focus on authentic historical facts, cultural heritage, architectural significance, etc.`;
+      Focus on authentic historical facts, cultural heritage, architectural significance, etc.`
 
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
       if (!apiKey) {
         setHistoryError(
-          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file."
-        );
-        setIsLoadingHistory(false);
-        return;
+          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file.",
+        )
+        setIsLoadingHistory(false)
+        return
       }
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
 
-      let jsonText = text.trim();
+      let jsonText = text.trim()
       if (jsonText.startsWith("```json")) {
-        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "")
       } else if (jsonText.startsWith("```")) {
-        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "")
       }
 
-      let historyData: any[];
+      let historyData: any[]
       try {
-        historyData = JSON.parse(jsonText);
+        historyData = JSON.parse(jsonText)
       } catch (parseError) {
-        console.error("History JSON parsing error:", parseError);
+        console.error("History JSON parsing error:", parseError)
         historyData = [
           {
             title: `Ancient Origins of ${location}`,
@@ -939,32 +881,27 @@ export default function VoyaGenieApp() {
             period: "Ancient Times",
             significance: "Foundation of local culture and traditions",
           },
-        ];
+        ]
       }
 
       const validatedHistory: HistoryContent[] = await Promise.all(
         historyData.map(async (history: any, index: number) => {
-          const historyImage = await fetchPhoto(
-            `${history.title || "history"} ${location}`,
-            "historical monument"
-          );
+          const historyImage = await fetchPhoto(`${history.title || "history"} ${location}`, "historical monument")
           return {
             title: history.title || `Historical Period ${index + 1}`,
-            content:
-              history.content || "Historical information about this period",
+            content: history.content || "Historical information about this period",
             period: history.period || "Historical period",
-            significance:
-              history.significance || "Significant historical importance",
+            significance: history.significance || "Significant historical importance",
             image: historyImage,
-          };
-        })
-      );
+          }
+        }),
+      )
 
-      setHistoryContent(validatedHistory);
-      setHistoryError("");
+      setHistoryContent(validatedHistory)
+      setHistoryError("")
     } catch (error) {
-      console.error("History fetch error:", error);
-      setHistoryError("Unable to fetch historical information");
+      console.error("History fetch error:", error)
+      setHistoryError("Unable to fetch historical information")
 
       // Fallback data
       setHistoryContent([
@@ -973,19 +910,18 @@ export default function VoyaGenieApp() {
           content: `This magnificent destination has a rich history dating back over 2,000 years. Ancient civilizations once thrived here, leaving behind remarkable architectural wonders and cultural traditions that continue to this day.`,
           period: "Ancient Era",
           significance: "Foundation of cultural heritage",
-          image:
-            "/placeholder.svg?height=200&width=300&text=Historical+Monument",
+          image: "/placeholder.svg?height=200&width=300&text=Historical+Monument",
         },
-      ]);
+      ])
     } finally {
-      setIsLoadingHistory(false);
+      setIsLoadingHistory(false)
     }
-  };
+  }
 
   // Fetch Surprise Content using Gemini AI
   const fetchSurpriseContent = async (location: string) => {
-    setIsLoadingSurprise(true);
-    setSurpriseError("");
+    setIsLoadingSurprise(true)
+    setSurpriseError("")
 
     try {
       const prompt = `Generate a hidden gem or surprise location for ${location} in JSON format.
@@ -1001,33 +937,33 @@ export default function VoyaGenieApp() {
       }
 
       Focus on authentic hidden gems, local secrets, or lesser-known beautiful spots in ${location}.
-      Make it sound magical and exciting for travelers.`;
+      Make it sound magical and exciting for travelers.`
 
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
       if (!apiKey) {
         setSurpriseError(
-          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file."
-        );
-        setIsLoadingSurprise(false);
-        return;
+          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file.",
+        )
+        setIsLoadingSurprise(false)
+        return
       }
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
 
-      let jsonText = text.trim();
+      let jsonText = text.trim()
       if (jsonText.startsWith("```json")) {
-        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "")
       } else if (jsonText.startsWith("```")) {
-        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "")
       }
 
-      let surpriseData: any;
+      let surpriseData: any
       try {
-        surpriseData = JSON.parse(jsonText);
+        surpriseData = JSON.parse(jsonText)
       } catch (parseError) {
-        console.error("Surprise JSON parsing error:", parseError);
+        console.error("Surprise JSON parsing error:", parseError)
         surpriseData = {
           title: "Hidden Gem Discovered! ✨",
           place: `Secret Viewpoint - ${location}`,
@@ -1036,33 +972,26 @@ export default function VoyaGenieApp() {
           tip: "Best visited 30 minutes before sunset with a picnic basket!",
           category: "Scenic Viewpoint",
           bestTime: "Golden hour",
-        };
+        }
       }
 
-      const surpriseImage = await fetchPhoto(
-        `${surpriseData.place || "hidden gem"} ${location}`,
-        "hidden gem"
-      );
+      const surpriseImage = await fetchPhoto(`${surpriseData.place || "hidden gem"} ${location}`, "hidden gem")
 
       const validatedSurprise: SurpriseContent = {
         title: surpriseData.title || "Hidden Gem Discovered! ✨",
         place: surpriseData.place || `Secret Spot - ${location}`,
-        description:
-          surpriseData.description ||
-          "A magical hidden location waiting to be discovered",
-        tip:
-          surpriseData.tip ||
-          "Visit during off-peak hours for the best experience",
+        description: surpriseData.description || "A magical hidden location waiting to be discovered",
+        tip: surpriseData.tip || "Visit during off-peak hours for the best experience",
         image: surpriseImage,
         category: surpriseData.category || "Hidden Gem",
         bestTime: surpriseData.bestTime || "Anytime",
-      };
+      }
 
-      setSurpriseContent(validatedSurprise);
-      setSurpriseError("");
+      setSurpriseContent(validatedSurprise)
+      setSurpriseError("")
     } catch (error) {
-      console.error("Surprise fetch error:", error);
-      setSurpriseError("Unable to fetch surprise content");
+      console.error("Surprise fetch error:", error)
+      setSurpriseError("Unable to fetch surprise content")
 
       // Fallback data
       setSurpriseContent({
@@ -1074,15 +1003,143 @@ export default function VoyaGenieApp() {
         image: "/placeholder.svg?height=300&width=400&text=Secret+Viewpoint",
         category: "Scenic Viewpoint",
         bestTime: "Golden hour",
-      });
+      })
     } finally {
-      setIsLoadingSurprise(false);
+      setIsLoadingSurprise(false)
     }
-  };
+  }
+
+  // Currency conversion functions
+  const fetchExchangeRates = async (baseCurrency = "USD") => {
+    setIsLoadingRates(true)
+    try {
+      const response = await fetch(`https://v6.exchangerate-api.com/v6/${process.env.NEXT_PUBLIC_EXCHANGE_API_KEY}/latest/${baseCurrency}`)
+      const data = await response.json()
+      if (data.result === "success") {
+        setExchangeRates(data)
+      }
+    } catch (error) {
+      console.error("Error fetching exchange rates:", error)
+    } finally {
+      setIsLoadingRates(false)
+    }
+  }
+
+  const convertCurrency = () => {
+    if (!exchangeRates || !amountToConvert) return
+
+    const amount = Number.parseFloat(amountToConvert)
+    if (isNaN(amount)) return
+
+    let convertedValue
+    if (selectedFromCurrency === exchangeRates.base_code) {
+      // Converting from base currency
+      convertedValue = amount * exchangeRates.conversion_rates[selectedToCurrency]
+    } else if (selectedToCurrency === exchangeRates.base_code) {
+      // Converting to base currency
+      convertedValue = amount / exchangeRates.conversion_rates[selectedFromCurrency]
+    } else {
+      // Converting between two non-base currencies
+      const toBase = amount / exchangeRates.conversion_rates[selectedFromCurrency]
+      convertedValue = toBase * exchangeRates.conversion_rates[selectedToCurrency]
+    }
+
+    setConvertedAmount(convertedValue.toFixed(2))
+  }
+
+  // Language translation function
+  const translateText = async () => {
+    if (!textToTranslate.trim()) return
+
+    setIsTranslating(true)
+    try {
+      const prompt = `Translate the following text from ${getLanguageName(fromLanguage)} to ${getLanguageName(toLanguage)}. Return only the translation without any additional text or explanation:
+
+"${textToTranslate}"`
+
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
+      if (!apiKey) {
+        setTranslatedText("Translation API key missing")
+        return
+      }
+
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const result = await model.generateContent(prompt)
+      const translation = result.response.text().trim()
+
+      setTranslatedText(translation)
+    } catch (error) {
+      console.error("Translation error:", error)
+      setTranslatedText("Translation failed. Please try again.")
+    } finally {
+      setIsTranslating(false)
+    }
+  }
+
+  const getLanguageName = (code: string) => {
+    const languages: { [key: string]: string } = {
+      en: "English",
+      hi: "Hindi",
+      es: "Spanish",
+      fr: "French",
+      de: "German",
+      it: "Italian",
+      pt: "Portuguese",
+      ru: "Russian",
+      ja: "Japanese",
+      ko: "Korean",
+      zh: "Chinese",
+      ar: "Arabic",
+      th: "Thai",
+      vi: "Vietnamese",
+      tr: "Turkish",
+      nl: "Dutch",
+      sv: "Swedish",
+      da: "Danish",
+      no: "Norwegian",
+      fi: "Finnish",
+    }
+    return languages[code] || code.toUpperCase()
+  }
+
+  // Auto-detect destination currency and language
+  const getDestinationDefaults = (destination: string) => {
+    const countryDefaults: { [key: string]: { currency: string; language: string } } = {
+      // Popular destinations
+      goa: { currency: "INR", language: "hi" },
+      manali: { currency: "INR", language: "hi" },
+      kerala: { currency: "INR", language: "hi" },
+      rajasthan: { currency: "INR", language: "hi" },
+      mumbai: { currency: "INR", language: "hi" },
+      delhi: { currency: "INR", language: "hi" },
+      bangalore: { currency: "INR", language: "hi" },
+      paris: { currency: "EUR", language: "fr" },
+      london: { currency: "GBP", language: "en" },
+      tokyo: { currency: "JPY", language: "ja" },
+      bangkok: { currency: "THB", language: "th" },
+      dubai: { currency: "AED", language: "ar" },
+      singapore: { currency: "SGD", language: "en" },
+      bali: { currency: "IDR", language: "id" },
+      maldives: { currency: "MVR", language: "dv" },
+      "sri lanka": { currency: "LKR", language: "si" },
+      nepal: { currency: "NPR", language: "ne" },
+      bhutan: { currency: "BTN", language: "dz" },
+      "new york": { currency: "USD", language: "en" },
+      "los angeles": { currency: "USD", language: "en" },
+      sydney: { currency: "AUD", language: "en" },
+      melbourne: { currency: "AUD", language: "en" },
+      toronto: { currency: "CAD", language: "en" },
+      vancouver: { currency: "CAD", language: "en" },
+    }
+
+    const key = destination.toLowerCase()
+    return countryDefaults[key] || { currency: "USD", language: "en" }
+  }
 
   // Export itinerary to PDF
   const exportToPDF = () => {
-    if (!generatedItinerary) return;
+    if (!generatedItinerary) return
 
     const content = `
 VoyaGenie - ${destination} Itinerary
@@ -1095,22 +1152,22 @@ Budget: ${budget}
 ${generatedItinerary.summary || ""}
 
 ${generatedItinerary.rawContent || JSON.stringify(generatedItinerary, null, 2)}
-  `;
+  `
 
-    const element = document.createElement("a");
-    const file = new Blob([content], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
-    element.download = `${destination}-itinerary.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  };
+    const element = document.createElement("a")
+    const file = new Blob([content], { type: "text/plain" })
+    element.href = URL.createObjectURL(file)
+    element.download = `${destination}-itinerary.txt`
+    document.body.appendChild(element)
+    element.click()
+    document.body.removeChild(element)
+  }
 
   // Email itinerary
   const emailItinerary = () => {
-    if (!generatedItinerary) return;
+    if (!generatedItinerary) return
 
-    const subject = `VoyaGenie - ${destination} Travel Itinerary`;
+    const subject = `VoyaGenie - ${destination} Travel Itinerary`
     const body = `
 Hi there!
 
@@ -1123,48 +1180,46 @@ Budget: ${budget}
 
 ${generatedItinerary.summary || ""}
 
-${
-  generatedItinerary.rawContent ||
-  "Please check the attached detailed itinerary."
-}
+${generatedItinerary.rawContent || "Please check the attached detailed itinerary."}
 
 Happy travels!
 VoyaGenie Team
-  `;
+  `
 
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(body)}`;
-    window.open(mailtoLink);
-  };
+    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    window.open(mailtoLink)
+  }
 
   const handleBackToLanding = () => {
-    setCurrentScreen("landing");
-  };
+    setCurrentScreen("landing")
+  }
 
   useEffect(() => {
     if (currentScreen === "destination" && destination.trim()) {
-      fetchWeatherData(destination);
-      fetchHotelsData(destination);
-      fetchPlacesData(destination);
-      fetchCuisinesData(destination);
-      fetchAdventuresData(destination);
-      fetchHistoryData(destination);
-      fetchSurpriseContent(destination);
+      fetchWeatherData(destination)
+      fetchHotelsData(destination)
+      fetchPlacesData(destination)
+      fetchCuisinesData(destination)
+      fetchAdventuresData(destination)
+      fetchHistoryData(destination)
+      fetchSurpriseContent(destination)
+
+      // Set conversion defaults based on destination
+      const defaults = getDestinationDefaults(destination)
+      setSelectedToCurrency(defaults.currency)
+      setToLanguage(defaults.language)
     }
-  }, [currentScreen, destination]);
+  }, [currentScreen, destination])
 
   // Generate Full Itinerary using AI with better JSON formatting
   const generateFullItinerary = async () => {
-    setIsGeneratingItinerary(true);
-    setItineraryError("");
+    setIsGeneratingItinerary(true)
+    setItineraryError("")
 
     try {
       const prompt = `Plan a detailed travel itinerary for ${destination} in JSON format based on:
       - Destination: ${destination}
-      - Travelers: ${travelers.adults} adults${
-        travelers.children > 0 ? `, ${travelers.children} children` : ""
-      }
+      - Travelers: ${travelers.adults} adults${travelers.children > 0 ? `, ${travelers.children} children` : ""}
       - Travel dates: ${dateType === "dates" ? travelDates : duration}
       - Budget: ${budget}
       - Departure city: Mumbai (default)
@@ -1248,52 +1303,50 @@ VoyaGenie Team
         }
       }
 
-      Make it detailed, practical, and engaging for ${
-        travelers.adults + travelers.children
-      } travelers.`;
+      Make it detailed, practical, and engaging for ${travelers.adults + travelers.children} travelers.`
 
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
       if (!apiKey) {
         setItineraryError(
-          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file."
-        );
-        setIsGeneratingItinerary(false);
-        return;
+          "Google Generative AI API key is missing. Please set NEXT_PUBLIC_GEMINI_API_KEY in your .env file.",
+        )
+        setIsGeneratingItinerary(false)
+        return
       }
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
 
       // Clean and parse JSON
-      let jsonText = text.trim();
+      let jsonText = text.trim()
       if (jsonText.startsWith("```json")) {
-        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "")
       } else if (jsonText.startsWith("```")) {
-        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+        jsonText = jsonText.replace(/^```\s*/, "").replace(/\s*```$/, "")
       }
 
-      let parsedItinerary;
+      let parsedItinerary
       try {
-        parsedItinerary = JSON.parse(jsonText);
+        parsedItinerary = JSON.parse(jsonText)
       } catch (parseError) {
-        console.error("Itinerary JSON parsing error:", parseError);
+        console.error("Itinerary JSON parsing error:", parseError)
         // Fallback to raw content display
         parsedItinerary = {
           rawContent: text,
           destination: destination,
           summary: "Custom itinerary generated for your trip",
-        };
+        }
       }
 
-      setGeneratedItinerary(parsedItinerary);
+      setGeneratedItinerary(parsedItinerary)
     } catch (error) {
-      console.error("Itinerary generation error:", error);
-      setItineraryError("Unable to generate itinerary. Please try again.");
+      console.error("Itinerary generation error:", error)
+      setItineraryError("Unable to generate itinerary. Please try again.")
     } finally {
-      setIsGeneratingItinerary(false);
+      setIsGeneratingItinerary(false)
     }
-  };
+  }
 
   if (currentScreen === "landing") {
     return (
@@ -1318,8 +1371,7 @@ VoyaGenie Team
             <div
               className="absolute w-80 h-80 rounded-full opacity-30 animate-pulse"
               style={{
-                background:
-                  "radial-gradient(circle, rgba(255, 183, 77, 0.6) 0%, transparent 70%)",
+                background: "radial-gradient(circle, rgba(255, 183, 77, 0.6) 0%, transparent 70%)",
                 top: "15%",
                 left: "10%",
                 animationDuration: "4s",
@@ -1328,8 +1380,7 @@ VoyaGenie Team
             <div
               className="absolute w-60 h-60 rounded-full opacity-30 animate-pulse"
               style={{
-                background:
-                  "radial-gradient(circle, rgba(255, 138, 101, 0.6) 0%, transparent 70%)",
+                background: "radial-gradient(circle, rgba(255, 138, 101, 0.6) 0%, transparent 70%)",
                 top: "50%",
                 right: "15%",
                 animationDuration: "6s",
@@ -1339,8 +1390,7 @@ VoyaGenie Team
             <div
               className="absolute w-40 h-40 rounded-full opacity-30 animate-pulse"
               style={{
-                background:
-                  "radial-gradient(circle, rgba(255, 206, 84, 0.6) 0%, transparent 70%)",
+                background: "radial-gradient(circle, rgba(255, 206, 84, 0.6) 0%, transparent 70%)",
                 bottom: "25%",
                 left: "25%",
                 animationDuration: "5s",
@@ -1363,8 +1413,7 @@ VoyaGenie Team
               onClick={scrollToDestination}
               className="px-12 py-6 text-xl rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 text-white font-bold"
               style={{
-                background:
-                  "linear-gradient(135deg, #FF8A65 0%, #FF7043 50%, #FF5722 100%)",
+                background: "linear-gradient(135deg, #FF8A65 0%, #FF7043 50%, #FF5722 100%)",
                 boxShadow: "0 8px 32px rgba(255, 87, 34, 0.3)",
               }}
             >
@@ -1384,12 +1433,8 @@ VoyaGenie Team
               }}
             >
               <CardHeader className="text-center pb-6">
-                <CardTitle className="text-3xl font-bold text-amber-900 mb-2">
-                  Plan Your Perfect Journey ✨
-                </CardTitle>
-                <p className="text-amber-700 text-lg">
-                  Tell us about your dream trip and we'll make it magical!
-                </p>
+                <CardTitle className="text-3xl font-bold text-amber-900 mb-2">Plan Your Perfect Journey ✨</CardTitle>
+                <p className="text-amber-700 text-lg">Tell us about your dream trip and we'll make it magical!</p>
               </CardHeader>
               <CardContent className="p-8 space-y-8">
                 {/* Destination Input */}
@@ -1481,9 +1526,7 @@ VoyaGenie Team
                           >
                             -
                           </Button>
-                          <span className="text-xl font-bold text-amber-900 w-8 text-center">
-                            {travelers.adults}
-                          </span>
+                          <span className="text-xl font-bold text-amber-900 w-8 text-center">{travelers.adults}</span>
                           <Button
                             type="button"
                             onClick={() => adjustTravelers("adults", true)}
@@ -1498,9 +1541,7 @@ VoyaGenie Team
                     <div className="bg-white rounded-2xl p-4 border-2 border-orange-200">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-semibold text-amber-900">
-                            Children
-                          </p>
+                          <p className="font-semibold text-amber-900">Children</p>
                           <p className="text-sm text-amber-700">Age 0-17</p>
                         </div>
                         <div className="flex items-center gap-3">
@@ -1511,9 +1552,7 @@ VoyaGenie Team
                           >
                             -
                           </Button>
-                          <span className="text-xl font-bold text-amber-900 w-8 text-center">
-                            {travelers.children}
-                          </span>
+                          <span className="text-xl font-bold text-amber-900 w-8 text-center">{travelers.children}</span>
                           <Button
                             type="button"
                             onClick={() => adjustTravelers("children", true)}
@@ -1531,13 +1570,9 @@ VoyaGenie Team
                       Total: {travelers.adults + travelers.children} traveler
                       {travelers.adults + travelers.children !== 1 ? "s" : ""}
                       {travelers.adults > 0 &&
-                        ` (${travelers.adults} adult${
-                          travelers.adults !== 1 ? "s" : ""
-                        }${
+                        ` (${travelers.adults} adult${travelers.adults !== 1 ? "s" : ""}${
                           travelers.children > 0
-                            ? `, ${travelers.children} child${
-                                travelers.children !== 1 ? "ren" : ""
-                              }`
+                            ? `, ${travelers.children} child${travelers.children !== 1 ? "ren" : ""}`
                             : ""
                         })`}
                     </p>
@@ -1552,12 +1587,7 @@ VoyaGenie Team
                   </label>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {[
-                      "Under ₹20k",
-                      "₹20k - ₹50k",
-                      "₹50k - ₹1L",
-                      "Above ₹1L",
-                    ].map((budgetOption) => (
+                    {["Under ₹20k", "₹20k - ₹50k", "₹50k - ₹1L", "Above ₹1L"].map((budgetOption) => (
                       <Button
                         key={budgetOption}
                         type="button"
@@ -1577,11 +1607,7 @@ VoyaGenie Team
                     <Input
                       placeholder="Or enter custom budget (e.g., $500, €800, ₹75000)..."
                       value={
-                        budget.startsWith("Under") ||
-                        budget.startsWith("₹") ||
-                        budget.startsWith("Above")
-                          ? ""
-                          : budget
+                        budget.startsWith("Under") || budget.startsWith("₹") || budget.startsWith("Above") ? "" : budget
                       }
                       onChange={(e) => setBudget(e.target.value)}
                       className="py-4 text-lg rounded-2xl border-2 border-orange-200 focus:border-orange-400 bg-white"
@@ -1593,17 +1619,11 @@ VoyaGenie Team
                 <div className="pt-6">
                   <Button
                     onClick={handleDestinationSubmit}
-                    disabled={
-                      !destination.trim() ||
-                      (!travelDates.trim() && !duration.trim()) ||
-                      !budget.trim()
-                    }
+                    disabled={!destination.trim() || (!travelDates.trim() && !duration.trim()) || !budget.trim()}
                     className="w-full py-6 text-xl rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       background:
-                        destination.trim() &&
-                        (travelDates.trim() || duration.trim()) &&
-                        budget.trim()
+                        destination.trim() && (travelDates.trim() || duration.trim()) && budget.trim()
                           ? "linear-gradient(135deg, #FF8A65 0%, #FF7043 50%, #FF5722 100%)"
                           : "linear-gradient(135deg, #FFCC80 0%, #FFB74D 100%)",
                       boxShadow: "0 8px 32px rgba(255, 87, 34, 0.3)",
@@ -1623,9 +1643,7 @@ VoyaGenie Team
                   />
                   <div
                     className={`w-3 h-3 rounded-full transition-all ${
-                      travelDates.trim() || duration.trim()
-                        ? "bg-orange-500"
-                        : "bg-orange-200"
+                      travelDates.trim() || duration.trim() ? "bg-orange-500" : "bg-orange-200"
                     }`}
                   />
                   <div
@@ -1641,15 +1659,14 @@ VoyaGenie Team
                 </div>
 
                 <p className="text-center text-amber-700 text-sm">
-                  Fill in all details to unlock your personalized travel
-                  experience
+                  Fill in all details to unlock your personalized travel experience
                 </p>
               </CardContent>
             </Card>
           </div>
         </section>
       </div>
-    );
+    )
   }
 
   return (
@@ -1667,10 +1684,7 @@ VoyaGenie Team
       </div>
 
       {/* Header with Back Button */}
-      <header
-        className="sticky top-0 z-40 p-2 sm:p-4"
-        style={{ backgroundColor: "rgba(255, 183, 77, 0.95)" }}
-      >
+      <header className="sticky top-0 z-40 p-2 sm:p-4" style={{ backgroundColor: "rgba(255, 183, 77, 0.95)" }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Button
             onClick={handleBackToLanding}
@@ -1682,9 +1696,7 @@ VoyaGenie Team
             <span className="sm:hidden">Back</span>
           </Button>
           <div className="text-center flex-1 px-2">
-            <h1 className="text-lg sm:text-2xl font-bold text-white">
-              Exploring {destination} ☀️
-            </h1>
+            <h1 className="text-lg sm:text-2xl font-bold text-white">Exploring {destination} ☀️</h1>
             <p className="text-orange-100 text-xs sm:text-sm">
               {travelers.adults + travelers.children} traveler
               {travelers.adults + travelers.children !== 1 ? "s" : ""} •
@@ -1700,8 +1712,18 @@ VoyaGenie Team
                 label: "Interactive Map",
                 action: () => setShowMapModal(true),
               },
-              { icon: Luggage, label: "Plan" },
-              { icon: RefreshCw, label: "Convert" },
+              // { icon: Luggage, label: "Plan" },
+              {
+                icon: RefreshCw,
+                label: "Convert",
+                action: () => {
+                  const defaults = getDestinationDefaults(destination)
+                  setSelectedToCurrency(defaults.currency)
+                  setToLanguage(defaults.language)
+                  setShowConvertModal(true)
+                  fetchExchangeRates()
+                },
+              },
             ].map((item, index) => (
               <Button
                 key={index}
@@ -1792,8 +1814,7 @@ VoyaGenie Team
               <Card
                 className="rounded-3xl shadow-2xl border-0"
                 style={{
-                  background:
-                    "linear-gradient(135deg, #FFB74D 0%, #FF9800 100%)",
+                  background: "linear-gradient(135deg, #FFB74D 0%, #FF9800 100%)",
                   boxShadow: "0 20px 60px rgba(255, 152, 0, 0.3)",
                 }}
               >
@@ -1801,15 +1822,9 @@ VoyaGenie Team
                   <CardTitle className="text-2xl text-white flex items-center gap-2">
                     <ThermometerSun className="h-6 w-6" />
                     Weather Forecast for {destination}
-                    {isLoadingWeather && (
-                      <Loader2 className="ml-2 h-5 w-5 animate-spin" />
-                    )}
+                    {isLoadingWeather && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
                   </CardTitle>
-                  {weatherError && (
-                    <p className="text-orange-100 text-sm mt-2">
-                      ⚠️ {weatherError}
-                    </p>
-                  )}
+                  {weatherError && <p className="text-orange-100 text-sm mt-2">⚠️ {weatherError}</p>}
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -1820,13 +1835,9 @@ VoyaGenie Team
                         style={{ backgroundColor: "rgba(255, 255, 255, 0.95)" }}
                       >
                         <CardContent className="p-6 text-center">
-                          <p className="font-semibold text-amber-800">
-                            {day.day}
-                          </p>
+                          <p className="font-semibold text-amber-800">{day.day}</p>
                           <day.icon className="h-12 w-12 mx-auto my-4 text-orange-500" />
-                          <p className="text-2xl font-bold text-amber-900">
-                            {day.temp}
-                          </p>
+                          <p className="text-2xl font-bold text-amber-900">{day.temp}</p>
                           <p className="text-sm text-amber-700">{day.desc}</p>
                         </CardContent>
                       </Card>
@@ -1899,10 +1910,7 @@ VoyaGenie Team
                 {isLoadingHotels ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[1, 2, 3].map((i) => (
-                      <Card
-                        key={i}
-                        className="rounded-3xl shadow-2xl border-0 overflow-hidden animate-pulse"
-                      >
+                      <Card key={i} className="rounded-3xl shadow-2xl border-0 overflow-hidden animate-pulse">
                         <div className="h-48 bg-orange-200" />
                         <CardContent className="p-6">
                           <div className="h-6 bg-orange-200 rounded mb-2" />
@@ -1923,24 +1931,16 @@ VoyaGenie Team
                         key={hotel.id}
                         className="rounded-3xl shadow-2xl border-0 overflow-hidden"
                         style={{
-                          background:
-                            "linear-gradient(135deg, #FFCC80 0%, #FFB74D 100%)",
+                          background: "linear-gradient(135deg, #FFCC80 0%, #FFB74D 100%)",
                           boxShadow: "0 15px 45px rgba(255, 152, 0, 0.2)",
                         }}
                       >
-                        <div
-                          className="h-48 bg-cover bg-center"
-                          style={{ backgroundImage: `url(${hotel.image})` }}
-                        />
+                        <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url(${hotel.image})` }} />
                         <CardContent className="p-6">
-                          <h3 className="text-xl font-bold text-amber-900 mb-2">
-                            {hotel.name}
-                          </h3>
+                          <h3 className="text-xl font-bold text-amber-900 mb-2">{hotel.name}</h3>
                           <div className="flex items-center gap-2 mb-3">
                             <Star className="h-4 w-4 text-yellow-600 fill-current" />
-                            <span className="font-semibold text-amber-800">
-                              {hotel.rating}
-                            </span>
+                            <span className="font-semibold text-amber-800">{hotel.rating}</span>
                           </div>
                           {hotel.address && (
                             <p className="text-sm text-amber-700 mb-2 flex items-center gap-1">
@@ -1956,23 +1956,17 @@ VoyaGenie Team
                           )}
                           <div className="flex flex-wrap gap-1 mb-4">
                             {hotel.amenities.map((amenity, i) => (
-                              <Badge
-                                key={i}
-                                className="rounded-full text-xs bg-orange-200 text-orange-800"
-                              >
+                              <Badge key={i} className="rounded-full text-xs bg-orange-200 text-orange-800">
                                 {amenity}
                               </Badge>
                             ))}
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-2xl font-bold text-amber-900">
-                              {hotel.price}
-                            </span>
+                            <span className="text-2xl font-bold text-amber-900">{hotel.price}</span>
                             <Button
                               className="rounded-full text-white font-bold"
                               style={{
-                                background:
-                                  "linear-gradient(135deg, #FF7043 0%, #FF5722 100%)",
+                                background: "linear-gradient(135deg, #FF7043 0%, #FF5722 100%)",
                               }}
                             >
                               Book Now
@@ -2016,10 +2010,7 @@ VoyaGenie Team
                 {isLoadingPlaces ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <Card
-                        key={i}
-                        className="rounded-3xl shadow-2xl border-0 overflow-hidden animate-pulse"
-                      >
+                      <Card key={i} className="rounded-3xl shadow-2xl border-0 overflow-hidden animate-pulse">
                         <div className="h-48 bg-orange-200" />
                         <CardContent className="p-6">
                           <div className="h-6 bg-orange-200 rounded mb-2" />
@@ -2040,8 +2031,7 @@ VoyaGenie Team
                         key={place.id}
                         className="rounded-3xl shadow-2xl border-0 overflow-hidden"
                         style={{
-                          background:
-                            "linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%)",
+                          background: "linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%)",
                           boxShadow: "0 15px 45px rgba(255, 152, 0, 0.2)",
                         }}
                       >
@@ -2050,48 +2040,35 @@ VoyaGenie Team
                           style={{
                             backgroundImage: `url(${
                               place.image ||
-                              `/placeholder.svg?height=200&width=300&text=${encodeURIComponent(
-                                place.name
-                              )}`
+                              `/placeholder.svg?height=200&width=300&text=${encodeURIComponent(place.name)}`
                             })`,
                           }}
                         />
                         <CardContent className="p-6">
-                          <h3 className="text-xl font-bold text-amber-900 mb-2">
-                            {place.name}
-                          </h3>
-                          <Badge className="mb-3 bg-orange-200 text-orange-800">
-                            {place.category}
-                          </Badge>
+                          <h3 className="text-xl font-bold text-amber-900 mb-2">{place.name}</h3>
+                          <Badge className="mb-3 bg-orange-200 text-orange-800">{place.category}</Badge>
                           {place.rating && (
                             <div className="flex items-center gap-2 mb-3">
                               <Star className="h-4 w-4 text-yellow-600 fill-current" />
-                              <span className="font-semibold text-amber-800">
-                                {place.rating.toFixed(1)}
-                              </span>
+                              <span className="font-semibold text-amber-800">{place.rating.toFixed(1)}</span>
                             </div>
                           )}
                           <div className="space-y-2 mb-4">
                             <div className="flex items-start gap-2">
                               <MapPin className="h-4 w-4 text-green-700 mt-0.5 flex-shrink-0" />
-                              <span className="text-amber-800 text-sm">
-                                {place.address}
-                              </span>
+                              <span className="text-amber-800 text-sm">{place.address}</span>
                             </div>
                             {place.distance && (
                               <div className="flex items-center gap-2">
                                 <Clock className="h-4 w-4 text-blue-700" />
-                                <span className="text-amber-800 text-sm">
-                                  {place.distance}
-                                </span>
+                                <span className="text-amber-800 text-sm">{place.distance}</span>
                               </div>
                             )}
                           </div>
                           <Button
                             className="w-full rounded-full text-white font-bold"
                             style={{
-                              background:
-                                "linear-gradient(135deg, #FFB74D 0%, #FF9800 100%)",
+                              background: "linear-gradient(135deg, #FFB74D 0%, #FF9800 100%)",
                             }}
                             onClick={() => setShowMapModal(true)}
                           >
@@ -2128,10 +2105,7 @@ VoyaGenie Team
                 {isLoadingCuisines ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[1, 2, 3].map((i) => (
-                      <Card
-                        key={i}
-                        className="rounded-3xl shadow-2xl border-0 overflow-hidden animate-pulse"
-                      >
+                      <Card key={i} className="rounded-3xl shadow-2xl border-0 overflow-hidden animate-pulse">
                         <div className="h-40 bg-orange-200" />
                         <CardContent className="p-6">
                           <div className="h-6 bg-orange-200 rounded mb-2" />
@@ -2152,46 +2126,25 @@ VoyaGenie Team
                         key={index}
                         className="rounded-3xl shadow-2xl border-0 overflow-hidden"
                         style={{
-                          background:
-                            "linear-gradient(135deg, #FFCC80 0%, #FFB74D 100%)",
+                          background: "linear-gradient(135deg, #FFCC80 0%, #FFB74D 100%)",
                           boxShadow: "0 15px 45px rgba(255, 152, 0, 0.2)",
                         }}
                       >
-                        <div
-                          className="h-40 bg-cover bg-center"
-                          style={{ backgroundImage: `url(${dish.image})` }}
-                        />
+                        <div className="h-40 bg-cover bg-center" style={{ backgroundImage: `url(${dish.image})` }} />
                         <CardContent className="p-6">
-                          <h3 className="text-lg font-bold text-amber-900 mb-2">
-                            {dish.name}
-                          </h3>
+                          <h3 className="text-lg font-bold text-amber-900 mb-2">{dish.name}</h3>
                           <div className="flex items-center gap-2 mb-3">
                             <Star className="h-4 w-4 text-yellow-600 fill-current" />
-                            <span className="font-semibold text-amber-800">
-                              {dish.rating}
-                            </span>
+                            <span className="font-semibold text-amber-800">{dish.rating}</span>
                           </div>
-                          {dish.description && (
-                            <p className="text-sm text-amber-700 mb-3">
-                              {dish.description}
-                            </p>
-                          )}
+                          {dish.description && <p className="text-sm text-amber-700 mb-3">{dish.description}</p>}
                           {dish.restaurant && (
-                            <p className="text-sm text-amber-600 mb-2 font-medium">
-                              📍 {dish.restaurant}
-                            </p>
+                            <p className="text-sm text-amber-600 mb-2 font-medium">📍 {dish.restaurant}</p>
                           )}
-                          {dish.price && (
-                            <p className="text-lg font-bold text-orange-600 mb-3">
-                              {dish.price}
-                            </p>
-                          )}
+                          {dish.price && <p className="text-lg font-bold text-orange-600 mb-3">{dish.price}</p>}
                           <div className="flex flex-wrap gap-1">
                             {dish.tags.map((tag, i) => (
-                              <Badge
-                                key={i}
-                                className="rounded-full text-xs bg-orange-200 text-orange-800"
-                              >
+                              <Badge key={i} className="rounded-full text-xs bg-orange-200 text-orange-800">
                                 {tag}
                               </Badge>
                             ))}
@@ -2226,10 +2179,7 @@ VoyaGenie Team
                 {isLoadingAdventures ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[1, 2, 3].map((i) => (
-                      <Card
-                        key={i}
-                        className="rounded-3xl shadow-2xl border-0 overflow-hidden animate-pulse"
-                      >
+                      <Card key={i} className="rounded-3xl shadow-2xl border-0 overflow-hidden animate-pulse">
                         <div className="h-48 bg-orange-200" />
                         <CardContent className="p-6">
                           <div className="h-6 bg-orange-200 rounded mb-2" />
@@ -2241,9 +2191,7 @@ VoyaGenie Team
                   </div>
                 ) : adventuresError ? (
                   <div className="text-center py-12">
-                    <p className="text-amber-800 text-lg">
-                      ⚠️ {adventuresError}
-                    </p>
+                    <p className="text-amber-800 text-lg">⚠️ {adventuresError}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -2252,8 +2200,7 @@ VoyaGenie Team
                         key={index}
                         className="rounded-3xl shadow-2xl border-0 overflow-hidden"
                         style={{
-                          background:
-                            "linear-gradient(135deg, #FF8A65 0%, #FF7043 100%)",
+                          background: "linear-gradient(135deg, #FF8A65 0%, #FF7043 100%)",
                           boxShadow: "0 15px 45px rgba(255, 87, 34, 0.3)",
                         }}
                       >
@@ -2262,13 +2209,9 @@ VoyaGenie Team
                           style={{ backgroundImage: `url(${adventure.image})` }}
                         />
                         <CardContent className="p-6">
-                          <h3 className="text-xl font-bold text-white mb-2">
-                            {adventure.name}
-                          </h3>
+                          <h3 className="text-xl font-bold text-white mb-2">{adventure.name}</h3>
                           {adventure.description && (
-                            <p className="text-orange-100 text-sm mb-3">
-                              {adventure.description}
-                            </p>
+                            <p className="text-orange-100 text-sm mb-3">{adventure.description}</p>
                           )}
                           <div className="space-y-2 mb-4 text-white">
                             <div className="flex items-center gap-2">
@@ -2295,8 +2238,7 @@ VoyaGenie Team
                           <Button
                             className="w-full rounded-full text-white font-bold"
                             style={{
-                              background:
-                                "linear-gradient(135deg, #FF5722 0%, #D84315 100%)",
+                              background: "linear-gradient(135deg, #FF5722 0%, #D84315 100%)",
                             }}
                           >
                             Book Adventure
@@ -2331,8 +2273,7 @@ VoyaGenie Team
                 <Card
                   className="rounded-3xl shadow-2xl border-0"
                   style={{
-                    background:
-                      "linear-gradient(135deg, #FFCC80 0%, #FFB74D 100%)",
+                    background: "linear-gradient(135deg, #FFCC80 0%, #FFB74D 100%)",
                     boxShadow: "0 20px 60px rgba(255, 152, 0, 0.3)",
                   }}
                 >
@@ -2340,24 +2281,15 @@ VoyaGenie Team
                     <CardTitle className="text-2xl text-amber-900 flex items-center gap-2">
                       <BookOpen className="h-6 w-6" />
                       Historical Facts about {destination}
-                      {isLoadingHistory && (
-                        <Loader2 className="ml-2 h-5 w-5 animate-spin" />
-                      )}
+                      {isLoadingHistory && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
                     </CardTitle>
-                    {historyError && (
-                      <p className="text-orange-100 text-sm mt-2">
-                        ⚠️ {historyError}
-                      </p>
-                    )}
+                    {historyError && <p className="text-orange-100 text-sm mt-2">⚠️ {historyError}</p>}
                   </CardHeader>
                   <CardContent className="p-8">
                     {isLoadingHistory ? (
                       <div className="space-y-6">
                         {[1, 2].map((i) => (
-                          <div
-                            key={i}
-                            className="bg-white rounded-2xl p-6 shadow-lg animate-pulse"
-                          >
+                          <div key={i} className="bg-white rounded-2xl p-6 shadow-lg animate-pulse">
                             <div className="h-6 bg-orange-200 rounded mb-3" />
                             <div className="space-y-2">
                               <div className="h-4 bg-orange-100 rounded" />
@@ -2370,10 +2302,7 @@ VoyaGenie Team
                     ) : (
                       <div className="space-y-6">
                         {historyContent.map((history, index) => (
-                          <div
-                            key={index}
-                            className="bg-white rounded-2xl p-6 shadow-lg"
-                          >
+                          <div key={index} className="bg-white rounded-2xl p-6 shadow-lg">
                             {history.image && (
                               <div
                                 className="h-32 sm:h-48 bg-cover bg-center rounded-xl mb-4"
@@ -2383,23 +2312,16 @@ VoyaGenie Team
                               />
                             )}
                             <div className="flex items-center justify-between mb-3">
-                              <h3 className="text-lg font-bold text-amber-900">
-                                {history.title}
-                              </h3>
+                              <h3 className="text-lg font-bold text-amber-900">{history.title}</h3>
                               {history.period && (
-                                <Badge className="bg-orange-200 text-orange-800">
-                                  {history.period}
-                                </Badge>
+                                <Badge className="bg-orange-200 text-orange-800">{history.period}</Badge>
                               )}
                             </div>
-                            <p className="text-amber-800 leading-relaxed mb-3">
-                              {history.content}
-                            </p>
+                            <p className="text-amber-800 leading-relaxed mb-3">{history.content}</p>
                             {history.significance && (
                               <div className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-3 border-l-4 border-orange-400">
                                 <p className="text-amber-900 font-medium text-sm">
-                                  <strong>Historical Significance:</strong>{" "}
-                                  {history.significance}
+                                  <strong>Historical Significance:</strong> {history.significance}
                                 </p>
                               </div>
                             )}
@@ -2421,13 +2343,12 @@ VoyaGenie Team
                         key={index}
                         className="aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
                         style={{
-                          background:
-                            "linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%)",
+                          background: "linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%)",
                           boxShadow: "0 8px 32px rgba(255, 152, 0, 0.2)",
                         }}
                       >
                         <img
-                          src={photo.src.medium}
+                          src={photo.src.medium || "/placeholder.svg"}
                           alt={photo.alt}
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                         />
@@ -2438,17 +2359,14 @@ VoyaGenie Team
                         key={index}
                         className="aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
                         style={{
-                          background:
-                            "linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%)",
+                          background: "linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%)",
                           boxShadow: "0 8px 32px rgba(255, 152, 0, 0.2)",
                         }}
                       >
                         <div
                           className="w-full h-full bg-cover bg-center hover:scale-105 transition-transform duration-300"
                           style={{
-                            backgroundImage: `url(/placeholder.svg?height=300&width=300&text=Gallery+${
-                              index + 1
-                            })`,
+                            backgroundImage: `url(/placeholder.svg?height=300&width=300&text=Gallery+${index + 1})`,
                           }}
                         />
                       </div>
@@ -2484,11 +2402,7 @@ VoyaGenie Team
                     )}
                   </Button>
 
-                  {itineraryError && (
-                    <p className="text-red-600 mt-4 text-lg">
-                      ⚠️ {itineraryError}
-                    </p>
-                  )}
+                  {itineraryError && <p className="text-red-600 mt-4 text-lg">⚠️ {itineraryError}</p>}
                 </div>
 
                 {generatedItinerary && (
@@ -2497,8 +2411,7 @@ VoyaGenie Team
                     <Card
                       className="rounded-3xl shadow-2xl border-0"
                       style={{
-                        background:
-                          "linear-gradient(135deg, #FFB74D 0%, #FF9800 100%)",
+                        background: "linear-gradient(135deg, #FFB74D 0%, #FF9800 100%)",
                         boxShadow: "0 20px 60px rgba(255, 152, 0, 0.3)",
                       }}
                     >
@@ -2508,16 +2421,11 @@ VoyaGenie Team
                         </CardTitle>
                         <p className="text-orange-100 text-lg">
                           {travelers.adults + travelers.children} traveler
-                          {travelers.adults + travelers.children !== 1
-                            ? "s"
-                            : ""}{" "}
-                          •{dateType === "dates" ? travelDates : duration} •{" "}
-                          {budget}
+                          {travelers.adults + travelers.children !== 1 ? "s" : ""} •
+                          {dateType === "dates" ? travelDates : duration} • {budget}
                         </p>
                         {generatedItinerary.summary && (
-                          <p className="text-orange-100 mt-2">
-                            {generatedItinerary.summary}
-                          </p>
+                          <p className="text-orange-100 mt-2">{generatedItinerary.summary}</p>
                         )}
                       </CardHeader>
                     </Card>
@@ -2552,60 +2460,43 @@ VoyaGenie Team
                     ) : (
                       <div className="grid gap-8">
                         {/* Flight Options */}
-                        {generatedItinerary.flightOptions &&
-                          generatedItinerary.flightOptions.length > 0 && (
-                            <Card className="rounded-3xl shadow-2xl border-0 bg-white">
-                              <CardHeader>
-                                <CardTitle className="text-2xl text-amber-900 flex items-center gap-2">
-                                  ✈️ Flight Options
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                <div className="grid gap-4">
-                                  {generatedItinerary.flightOptions.map(
-                                    (flight: any, index: number) => (
-                                      <div
-                                        key={index}
-                                        className="bg-orange-50 rounded-2xl p-6"
-                                      >
-                                        <div className="grid md:grid-cols-2 gap-4">
-                                          <div>
-                                            <h3 className="font-bold text-amber-900 mb-2">
-                                              {flight.airline}
-                                            </h3>
-                                            <p className="text-amber-800">
-                                              {flight.route}
-                                            </p>
-                                            <p className="text-amber-800">
-                                              <strong>Departure:</strong>{" "}
-                                              {flight.departure}
-                                            </p>
-                                            <p className="text-amber-800">
-                                              <strong>Arrival:</strong>{" "}
-                                              {flight.arrival}
-                                            </p>
-                                          </div>
-                                          <div className="text-right">
-                                            <p className="text-2xl font-bold text-orange-600">
-                                              {flight.price}
-                                            </p>
-                                            <p className="text-amber-700">
-                                              Duration: {flight.duration}
-                                            </p>
-                                          </div>
-                                        </div>
+                        {generatedItinerary.flightOptions && generatedItinerary.flightOptions.length > 0 && (
+                          <Card className="rounded-3xl shadow-2xl border-0 bg-white">
+                            <CardHeader>
+                              <CardTitle className="text-2xl text-amber-900 flex items-center gap-2">
+                                ✈️ Flight Options
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="grid gap-4">
+                                {generatedItinerary.flightOptions.map((flight: any, index: number) => (
+                                  <div key={index} className="bg-orange-50 rounded-2xl p-6">
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                      <div>
+                                        <h3 className="font-bold text-amber-900 mb-2">{flight.airline}</h3>
+                                        <p className="text-amber-800">{flight.route}</p>
+                                        <p className="text-amber-800">
+                                          <strong>Departure:</strong> {flight.departure}
+                                        </p>
+                                        <p className="text-amber-800">
+                                          <strong>Arrival:</strong> {flight.arrival}
+                                        </p>
                                       </div>
-                                    )
-                                  )}
-                                </div>
-                              </CardContent>
-                            </Card>
-                          )}
+                                      <div className="text-right">
+                                        <p className="text-2xl font-bold text-orange-600">{flight.price}</p>
+                                        <p className="text-amber-700">Duration: {flight.duration}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
 
                         {/* Hotel Recommendations */}
                         {generatedItinerary.hotelRecommendations &&
-                          generatedItinerary.hotelRecommendations.length >
-                            0 && (
+                          generatedItinerary.hotelRecommendations.length > 0 && (
                             <Card className="rounded-3xl shadow-2xl border-0 bg-white">
                               <CardHeader>
                                 <CardTitle className="text-2xl text-amber-900 flex items-center gap-2">
@@ -2614,133 +2505,90 @@ VoyaGenie Team
                               </CardHeader>
                               <CardContent>
                                 <div className="grid md:grid-cols-2 gap-4">
-                                  {generatedItinerary.hotelRecommendations.map(
-                                    (hotel: any, index: number) => (
-                                      <div
-                                        key={index}
-                                        className="bg-orange-50 rounded-2xl p-6"
-                                      >
-                                        <div className="flex justify-between items-start mb-3">
-                                          <h3 className="font-bold text-amber-900">
-                                            {hotel.name}
-                                          </h3>
-                                          <Badge className="bg-orange-200 text-orange-800">
-                                            {hotel.category}
-                                          </Badge>
-                                        </div>
-                                        <p className="text-amber-800 mb-2">
-                                          📍 {hotel.location}
-                                        </p>
-                                        <div className="flex items-center gap-2 mb-3">
-                                          <Star className="h-4 w-4 text-yellow-600 fill-current" />
-                                          <span className="font-semibold text-amber-800">
-                                            {hotel.rating}
-                                          </span>
-                                        </div>
-                                        <p className="text-2xl font-bold text-orange-600 mb-3">
-                                          {hotel.price}
-                                        </p>
-                                        {hotel.highlights && (
-                                          <div className="flex flex-wrap gap-1">
-                                            {hotel.highlights.map(
-                                              (
-                                                highlight: string,
-                                                i: number
-                                              ) => (
-                                                <Badge
-                                                  key={i}
-                                                  className="text-xs bg-yellow-200 text-yellow-800"
-                                                >
-                                                  {highlight}
-                                                </Badge>
-                                              )
-                                            )}
-                                          </div>
-                                        )}
+                                  {generatedItinerary.hotelRecommendations.map((hotel: any, index: number) => (
+                                    <div key={index} className="bg-orange-50 rounded-2xl p-6">
+                                      <div className="flex justify-between items-start mb-3">
+                                        <h3 className="font-bold text-amber-900">{hotel.name}</h3>
+                                        <Badge className="bg-orange-200 text-orange-800">{hotel.category}</Badge>
                                       </div>
-                                    )
-                                  )}
+                                      <p className="text-amber-800 mb-2">📍 {hotel.location}</p>
+                                      <div className="flex items-center gap-2 mb-3">
+                                        <Star className="h-4 w-4 text-yellow-600 fill-current" />
+                                        <span className="font-semibold text-amber-800">{hotel.rating}</span>
+                                      </div>
+                                      <p className="text-2xl font-bold text-orange-600 mb-3">{hotel.price}</p>
+                                      {hotel.highlights && (
+                                        <div className="flex flex-wrap gap-1">
+                                          {hotel.highlights.map((highlight: string, i: number) => (
+                                            <Badge key={i} className="text-xs bg-yellow-200 text-yellow-800">
+                                              {highlight}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
                                 </div>
                               </CardContent>
                             </Card>
                           )}
 
                         {/* Daily Itinerary */}
-                        {generatedItinerary.dailyItinerary &&
-                          generatedItinerary.dailyItinerary.length > 0 && (
-                            <Card className="rounded-3xl shadow-2xl border-0 bg-white">
-                              <CardHeader>
-                                <CardTitle className="text-2xl text-amber-900 flex items-center gap-2">
-                                  📅 Day-by-Day Itinerary
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                <div className="space-y-6">
-                                  {generatedItinerary.dailyItinerary.map(
-                                    (day: any, index: number) => (
-                                      <div
-                                        key={index}
-                                        className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-6"
-                                      >
-                                        <div className="flex items-center justify-between mb-4">
-                                          <h3 className="text-xl font-bold text-amber-900">
-                                            Day {day.day}: {day.title}
-                                          </h3>
-                                          {day.theme && (
-                                            <Badge className="bg-orange-200 text-orange-800">
-                                              {day.theme}
-                                            </Badge>
-                                          )}
+                        {generatedItinerary.dailyItinerary && generatedItinerary.dailyItinerary.length > 0 && (
+                          <Card className="rounded-3xl shadow-2xl border-0 bg-white">
+                            <CardHeader>
+                              <CardTitle className="text-2xl text-amber-900 flex items-center gap-2">
+                                📅 Day-by-Day Itinerary
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-6">
+                                {generatedItinerary.dailyItinerary.map((day: any, index: number) => (
+                                  <div
+                                    key={index}
+                                    className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-6"
+                                  >
+                                    <div className="flex items-center justify-between mb-4">
+                                      <h3 className="text-xl font-bold text-amber-900">
+                                        Day {day.day}: {day.title}
+                                      </h3>
+                                      {day.theme && (
+                                        <Badge className="bg-orange-200 text-orange-800">{day.theme}</Badge>
+                                      )}
+                                    </div>
+                                    <div className="space-y-3">
+                                      {day.activities?.map((activity: any, actIndex: number) => (
+                                        <div key={actIndex} className="flex items-start gap-3 bg-white rounded-xl p-4">
+                                          <Clock className="h-5 w-5 text-orange-600 mt-1" />
+                                          <div className="flex-1">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <p className="font-semibold text-amber-900">{activity.time}</p>
+                                              {activity.cost && (
+                                                <span className="text-orange-600 font-medium">{activity.cost}</span>
+                                              )}
+                                            </div>
+                                            <p className="text-amber-800 mb-1">{activity.activity}</p>
+                                            {activity.location && (
+                                              <p className="text-sm text-amber-700 flex items-center gap-1">
+                                                <MapPin className="h-3 w-3" />
+                                                {activity.location}
+                                              </p>
+                                            )}
+                                            {activity.duration && (
+                                              <p className="text-sm text-amber-600 mt-1">
+                                                Duration: {activity.duration}
+                                              </p>
+                                            )}
+                                          </div>
                                         </div>
-                                        <div className="space-y-3">
-                                          {day.activities?.map(
-                                            (
-                                              activity: any,
-                                              actIndex: number
-                                            ) => (
-                                              <div
-                                                key={actIndex}
-                                                className="flex items-start gap-3 bg-white rounded-xl p-4"
-                                              >
-                                                <Clock className="h-5 w-5 text-orange-600 mt-1" />
-                                                <div className="flex-1">
-                                                  <div className="flex items-center justify-between mb-2">
-                                                    <p className="font-semibold text-amber-900">
-                                                      {activity.time}
-                                                    </p>
-                                                    {activity.cost && (
-                                                      <span className="text-orange-600 font-medium">
-                                                        {activity.cost}
-                                                      </span>
-                                                    )}
-                                                  </div>
-                                                  <p className="text-amber-800 mb-1">
-                                                    {activity.activity}
-                                                  </p>
-                                                  {activity.location && (
-                                                    <p className="text-sm text-amber-700 flex items-center gap-1">
-                                                      <MapPin className="h-3 w-3" />
-                                                      {activity.location}
-                                                    </p>
-                                                  )}
-                                                  {activity.duration && (
-                                                    <p className="text-sm text-amber-600 mt-1">
-                                                      Duration:{" "}
-                                                      {activity.duration}
-                                                    </p>
-                                                  )}
-                                                </div>
-                                              </div>
-                                            )
-                                          )}
-                                        </div>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              </CardContent>
-                            </Card>
-                          )}
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
 
                         {/* Food Recommendations */}
                         {generatedItinerary.foodRecommendations &&
@@ -2753,92 +2601,61 @@ VoyaGenie Team
                               </CardHeader>
                               <CardContent>
                                 <div className="grid md:grid-cols-2 gap-4">
-                                  {generatedItinerary.foodRecommendations.map(
-                                    (restaurant: any, index: number) => (
-                                      <div
-                                        key={index}
-                                        className="bg-orange-50 rounded-2xl p-6"
-                                      >
-                                        <h3 className="font-bold text-amber-900 mb-2">
-                                          {restaurant.name}
-                                        </h3>
-                                        <p className="text-amber-800 mb-2">
-                                          🍴 {restaurant.cuisine}
+                                  {generatedItinerary.foodRecommendations.map((restaurant: any, index: number) => (
+                                    <div key={index} className="bg-orange-50 rounded-2xl p-6">
+                                      <h3 className="font-bold text-amber-900 mb-2">{restaurant.name}</h3>
+                                      <p className="text-amber-800 mb-2">🍴 {restaurant.cuisine}</p>
+                                      <p className="text-amber-700 mb-2">📍 {restaurant.location}</p>
+                                      {restaurant.priceRange && (
+                                        <p className="text-orange-600 font-semibold mb-2">{restaurant.priceRange}</p>
+                                      )}
+                                      {restaurant.mustTry && (
+                                        <p className="text-amber-900 font-medium mb-2">
+                                          <strong>Must Try:</strong> {restaurant.mustTry}
                                         </p>
-                                        <p className="text-amber-700 mb-2">
-                                          📍 {restaurant.location}
-                                        </p>
-                                        {restaurant.priceRange && (
-                                          <p className="text-orange-600 font-semibold mb-2">
-                                            {restaurant.priceRange}
-                                          </p>
-                                        )}
-                                        {restaurant.mustTry && (
-                                          <p className="text-amber-900 font-medium mb-2">
-                                            <strong>Must Try:</strong>{" "}
-                                            {restaurant.mustTry}
-                                          </p>
-                                        )}
-                                        <p className="text-sm text-amber-700">
-                                          {restaurant.description}
-                                        </p>
-                                      </div>
-                                    )
-                                  )}
+                                      )}
+                                      <p className="text-sm text-amber-700">{restaurant.description}</p>
+                                    </div>
+                                  ))}
                                 </div>
                               </CardContent>
                             </Card>
                           )}
 
                         {/* Experiences */}
-                        {generatedItinerary.experiences &&
-                          generatedItinerary.experiences.length > 0 && (
-                            <Card className="rounded-3xl shadow-2xl border-0 bg-white">
-                              <CardHeader>
-                                <CardTitle className="text-2xl text-amber-900 flex items-center gap-2">
-                                  🎯 Special Experiences
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                <div className="grid md:grid-cols-2 gap-4">
-                                  {generatedItinerary.experiences.map(
-                                    (experience: any, index: number) => (
-                                      <div
-                                        key={index}
-                                        className="bg-orange-50 rounded-2xl p-6"
-                                      >
-                                        <div className="flex items-center justify-between mb-3">
-                                          <h3 className="font-bold text-amber-900">
-                                            {experience.name}
-                                          </h3>
-                                          <Badge className="bg-orange-200 text-orange-800">
-                                            {experience.type}
-                                          </Badge>
-                                        </div>
-                                        <p className="text-amber-800 mb-3">
-                                          {experience.description}
-                                        </p>
-                                        <div className="space-y-2 text-sm text-amber-700">
-                                          <p>
-                                            <strong>Duration:</strong>{" "}
-                                            {experience.duration}
-                                          </p>
-                                          <p>
-                                            <strong>Cost:</strong>{" "}
-                                            {experience.cost}
-                                          </p>
-                                          <p>
-                                            <strong>Best Time:</strong>{" "}
-                                            {experience.bestTime}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              </CardContent>
-                            </Card>
-                          )}
+                        {generatedItinerary.experiences && generatedItinerary.experiences.length > 0 && (
+                          <Card className="rounded-3xl shadow-2xl border-0 bg-white">
+                            <CardHeader>
+                              <CardTitle className="text-2xl text-amber-900 flex items-center gap-2">
+                                🎯 Special Experiences
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="grid md:grid-cols-2 gap-4">
+                                {generatedItinerary.experiences.map((experience: any, index: number) => (
+                                  <div key={index} className="bg-orange-50 rounded-2xl p-6">
+                                    <div className="flex items-center justify-between mb-3">
+                                      <h3 className="font-bold text-amber-900">{experience.name}</h3>
+                                      <Badge className="bg-orange-200 text-orange-800">{experience.type}</Badge>
+                                    </div>
+                                    <p className="text-amber-800 mb-3">{experience.description}</p>
+                                    <div className="space-y-2 text-sm text-amber-700">
+                                      <p>
+                                        <strong>Duration:</strong> {experience.duration}
+                                      </p>
+                                      <p>
+                                        <strong>Cost:</strong> {experience.cost}
+                                      </p>
+                                      <p>
+                                        <strong>Best Time:</strong> {experience.bestTime}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
 
                         {/* Local Insights */}
                         {generatedItinerary.localInsights && (
@@ -2850,9 +2667,7 @@ VoyaGenie Team
                             </CardHeader>
                             <CardContent>
                               <div className="grid md:grid-cols-2 gap-6">
-                                {Object.entries(
-                                  generatedItinerary.localInsights
-                                ).map(([key, value]: [string, any]) => (
+                                {Object.entries(generatedItinerary.localInsights).map(([key, value]: [string, any]) => (
                                   <div
                                     key={key}
                                     className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl p-4"
@@ -2860,9 +2675,7 @@ VoyaGenie Team
                                     <h4 className="font-bold text-amber-900 mb-2 capitalize">
                                       {key.replace(/([A-Z])/g, " $1").trim()}
                                     </h4>
-                                    <p className="text-amber-800 text-sm leading-relaxed">
-                                      {value}
-                                    </p>
+                                    <p className="text-amber-800 text-sm leading-relaxed">{value}</p>
                                   </div>
                                 ))}
                               </div>
@@ -2881,27 +2694,22 @@ VoyaGenie Team
                             <CardContent>
                               <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl p-6">
                                 <div className="grid md:grid-cols-2 gap-4">
-                                  {Object.entries(
-                                    generatedItinerary.budgetBreakdown
-                                  ).map(([key, value]: [string, any]) => (
-                                    <div
-                                      key={key}
-                                      className="flex justify-between items-center py-2"
-                                    >
-                                      <span className="font-medium text-emerald-900 capitalize">
-                                        {key.replace(/([A-Z])/g, " $1").trim()}:
-                                      </span>
-                                      <span
-                                        className={`font-bold ${
-                                          key === "total"
-                                            ? "text-2xl text-emerald-700"
-                                            : "text-emerald-800"
-                                        }`}
-                                      >
-                                        {value}
-                                      </span>
-                                    </div>
-                                  ))}
+                                  {Object.entries(generatedItinerary.budgetBreakdown).map(
+                                    ([key, value]: [string, any]) => (
+                                      <div key={key} className="flex justify-between items-center py-2">
+                                        <span className="font-medium text-emerald-900 capitalize">
+                                          {key.replace(/([A-Z])/g, " $1").trim()}:
+                                        </span>
+                                        <span
+                                          className={`font-bold ${
+                                            key === "total" ? "text-2xl text-emerald-700" : "text-emerald-800"
+                                          }`}
+                                        >
+                                          {value}
+                                        </span>
+                                      </div>
+                                    ),
+                                  )}
                                 </div>
                               </div>
                             </CardContent>
@@ -2917,70 +2725,21 @@ VoyaGenie Team
         </div>
       </section>
 
-      {/* Interactive Map Modal */}
-      <Dialog open={showMapModal} onOpenChange={setShowMapModal}>
-        <DialogContent className="max-w-4xl h-[90vh] p-0">
-          <DialogHeader className="p-6 pb-0">
-            <DialogTitle className="text-2xl font-bold text-amber-900 flex items-center gap-2">
-              <MapIcon className="h-6 w-6" />
-              Interactive Map - {destination}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex-1 p-6">
-            {destinationCoords ? (
-              <MapComponent
-                center={destinationCoords}
-                zoom={13}
-                width={850}
-                height={500}
-              />
-            ) : (
-              <div
-                id="map"
-                className="w-full h-full rounded-2xl"
-                style={{ minHeight: "500px", backgroundColor: "#f0f0f0" }}
-              >
-                <div className="flex items-center justify-center h-full text-amber-800">
-                  <div className="text-center">
-                    <MapIcon className="h-16 w-16 mx-auto mb-4 text-orange-500" />
-                    <p className="text-lg font-semibold mb-2">
-                      Interactive Map
-                    </p>
-                    <p className="text-sm">
-                      Map will load here showing {destination} with markers for
-                      hotels and places of interest.
-                    </p>
-                    {destinationCoords && (
-                      <p className="text-xs mt-2 text-amber-600">
-                        Coordinates: {destinationCoords.lat.toFixed(4)},{" "}
-                        {destinationCoords.lng.toFixed(4)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* Big Floating Surprise Button */}
       <Button
         onClick={() => setShowSurprisePopup(true)}
-        className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 rounded-full w-16 h-16 sm:w-20 sm:h-20 shadow-2xl animate-bounce text-white font-bold text-sm sm:text-lg"
+        className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 rounded-full w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 shadow-2xl animate-bounce text-white font-bold text-xs sm:text-sm lg:text-lg z-50"
         style={{
-          background:
-            "linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD23F 100%)",
+          background: "linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD23F 100%)",
           boxShadow: "0 12px 40px rgba(255, 107, 53, 0.4)",
         }}
         title="Surprise Me!"
       >
         <div className="flex flex-col items-center">
-          <Sparkles className="h-6 sm:h-8 w-6 sm:w-8 mb-1" />
+          <Sparkles className="h-4 sm:h-6 lg:h-8 w-4 sm:w-6 lg:w-8 mb-1" />
           <span className="text-xs">Surprise!</span>
         </div>
       </Button>
-
       {/* Big Surprise Popup */}
       <Dialog open={showSurprisePopup} onOpenChange={setShowSurprisePopup}>
         <DialogContent
@@ -3086,7 +2845,233 @@ VoyaGenie Team
             </div>
           </div>
         </DialogContent>
+      </Dialog> 
+      {/* Interactive Map Modal */}
+      <Dialog open={showMapModal} onOpenChange={setShowMapModal}>
+        <DialogContent className="max-w-4xl h-[90vh] p-0">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle className="text-2xl font-bold text-amber-900 flex items-center gap-2">
+              <MapIcon className="h-6 w-6" />
+              Interactive Map - {destination}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 p-6">
+            {destinationCoords ? (
+              <MapComponent center={destinationCoords} zoom={13} width={850} height={500} />
+            ) : (
+              <div
+                id="map"
+                className="w-full h-full rounded-2xl"
+                style={{ minHeight: "500px", backgroundColor: "#f0f0f0" }}
+              >
+                <div className="flex items-center justify-center h-full text-amber-800">
+                  <div className="text-center">
+                    <MapIcon className="h-16 w-16 mx-auto mb-4 text-orange-500" />
+                    <p className="text-lg font-semibold mb-2">Interactive Map</p>
+                    <p className="text-sm">
+                      Map will load here showing {destination} with markers for hotels and places of interest.
+                    </p>
+                    {destinationCoords && (
+                      <p className="text-xs mt-2 text-amber-600">
+                        Coordinates: {destinationCoords.lat.toFixed(4)}, {destinationCoords.lng.toFixed(4)}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Currency & Language Converter Modal */}
+      <Dialog open={showConvertModal} onOpenChange={setShowConvertModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border-0 p-0">
+          <div
+            className="p-6"
+            style={{
+              background: "linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%)",
+            }}
+          >
+            <DialogHeader className="mb-6">
+              <DialogTitle className="text-2xl font-bold text-amber-900 flex items-center gap-2">
+                <RefreshCw className="h-6 w-6" />
+                Currency & Language Converter
+              </DialogTitle>
+              <p className="text-amber-700">Convert currencies and translate text for your trip to {destination}</p>
+            </DialogHeader>
+
+            {/* Currency Converter */}
+            <div className="space-y-4 mb-6">
+              <h4 className="text-xl font-semibold text-amber-900">
+                Currency Converter
+                {isLoadingRates && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              </h4>
+
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block text-amber-700 text-sm font-bold mb-2">From</label>
+                  <select
+                    value={selectedFromCurrency}
+                    onChange={(e) => setSelectedFromCurrency(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-3 px-3 text-amber-700 leading-tight focus:outline-none focus:shadow-outline"
+                  >
+                    {exchangeRates &&
+                      Object.keys(exchangeRates.conversion_rates).map((currencyCode) => (
+                        <option key={currencyCode} value={currencyCode}>
+                          {currencyCode}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+                <div className="flex-1">
+                  <label className="block text-amber-700 text-sm font-bold mb-2">To</label>
+                  <select
+                    value={selectedToCurrency}
+                    onChange={(e) => setSelectedToCurrency(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-3 px-3 text-amber-700 leading-tight focus:outline-none focus:shadow-outline"
+                  >
+                    {exchangeRates &&
+                      Object.keys(exchangeRates.conversion_rates).map((currencyCode) => (
+                        <option key={currencyCode} value={currencyCode}>
+                          {currencyCode}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block text-amber-700 text-sm font-bold mb-2">Amount</label>
+                  <Input
+                    type="number"
+                    placeholder="Enter amount"
+                    value={amountToConvert}
+                    onChange={(e) => setAmountToConvert(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-3 px-3 text-amber-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <label className="block text-amber-700 text-sm font-bold mb-2">Converted Amount</label>
+                  <Input
+                    type="text"
+                    value={convertedAmount}
+                    readOnly
+                    placeholder="Converted amount"
+                    className="shadow appearance-none border rounded w-full py-3 px-3 text-amber-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              </div>
+
+              <Button
+                onClick={convertCurrency}
+                disabled={!amountToConvert}
+                className="w-full rounded-full bg-white text-orange-600 hover:bg-orange-50 font-medium"
+              >
+                Convert
+              </Button>
+            </div>
+
+            {/* Language Translator */}
+            <div className="space-y-4">
+              <h4 className="text-xl font-semibold text-amber-900">
+                Language Translator
+                {isTranslating && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              </h4>
+
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block text-amber-700 text-sm font-bold mb-2">From</label>
+                  <select
+                    value={fromLanguage}
+                    onChange={(e) => setFromLanguage(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-3 px-3 text-amber-700 leading-tight focus:outline-none focus:shadow-outline"
+                  >
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="it">Italian</option>
+                    <option value="pt">Portuguese</option>
+                    <option value="ru">Russian</option>
+                    <option value="ja">Japanese</option>
+                    <option value="ko">Korean</option>
+                    <option value="zh">Chinese</option>
+                    <option value="ar">Arabic</option>
+                    <option value="th">Thai</option>
+                    <option value="vi">Vietnamese</option>
+                    <option value="tr">Turkish</option>
+                    <option value="nl">Dutch</option>
+                    <option value="sv">Swedish</option>
+                    <option value="da">Danish</option>
+                    <option value="no">Norwegian</option>
+                    <option value="fi">Finnish</option>
+                  </select>
+                </div>
+
+                <div className="flex-1">
+                  <label className="block text-amber-700 text-sm font-bold mb-2">To</label>
+                  <select
+                    value={toLanguage}
+                    onChange={(e) => setToLanguage(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-3 px-3 text-amber-700 leading-tight focus:outline-none focus:shadow-outline"
+                  >
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="it">Italian</option>
+                    <option value="pt">Portuguese</option>
+                    <option value="ru">Russian</option>
+                    <option value="ja">Japanese</option>
+                    <option value="ko">Korean</option>
+                    <option value="zh">Chinese</option>
+                    <option value="ar">Arabic</option>
+                    <option value="th">Thai</option>
+                    <option value="vi">Vietnamese</option>
+                    <option value="tr">Turkish</option>
+                    <option value="nl">Dutch</option>
+                    <option value="sv">Swedish</option>
+                    <option value="da">Danish</option>
+                    <option value="no">Norwegian</option>
+                    <option value="fi">Finnish</option>
+                  </select>
+                </div>
+              </div>
+
+              <label className="block text-amber-700 text-sm font-bold mb-2">Text to Translate</label>
+              <Input
+                placeholder="Enter text to translate"
+                value={textToTranslate}
+                onChange={(e) => setTextToTranslate(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-3 px-3 text-amber-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+
+              <label className="block text-amber-700 text-sm font-bold mb-2">Translated Text</label>
+              <Input
+                type="text"
+                value={translatedText}
+                readOnly
+                placeholder="Translated text"
+                className="shadow appearance-none border rounded w-full py-3 px-3 text-amber-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+
+              <Button
+                onClick={translateText}
+                disabled={!textToTranslate}
+                className="w-full rounded-full bg-white text-orange-600 hover:bg-orange-50 font-medium"
+              >
+                Translate
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

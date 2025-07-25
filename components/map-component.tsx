@@ -1,38 +1,33 @@
-import React, { useEffect, useRef } from "react";
-import maplibregl from "maplibre-gl";
+"use client"
+
+import { useEffect, useRef } from "react"
+import maplibregl from "maplibre-gl"
 
 interface MapComponentProps {
-  center: { lat: number; lng: number };
-  zoom?: number;
-  width?: number;
-  height?: number;
+  center: { lat: number; lng: number }
+  zoom?: number
+  width?: number
+  height?: number
 }
 
-const GEOAPIFY_API_KEY = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY;
+const GEOAPIFY_API_KEY = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY
 
-export default function MapComponent({
-  center,
-  zoom = 13,
-  width = 600,
-  height = 400,
-}: MapComponentProps) {
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
+export default function MapComponent({ center, zoom = 13, width = 600, height = 400 }: MapComponentProps) {
+  const mapContainerRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<maplibregl.Map | null>(null)
 
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    if (!mapContainerRef.current) return
 
     // Clean up previous map instance
     if (mapRef.current) {
-      mapRef.current.remove();
-      mapRef.current = null;
+      mapRef.current.remove()
+      mapRef.current = null
     }
 
     if (!GEOAPIFY_API_KEY) {
-      console.error(
-        "Geoapify API key is missing. Please set NEXT_PUBLIC_GEOAPIFY_API_KEY in your .env file."
-      );
-      return;
+      console.error("Geoapify API key is missing. Please set NEXT_PUBLIC_GEOAPIFY_API_KEY in your .env file.")
+      return
     }
     // Initialize MapLibre map
     const map = new maplibregl.Map({
@@ -42,12 +37,9 @@ export default function MapComponent({
         sources: {
           geoapify: {
             type: "raster",
-            tiles: [
-              `https://maps.geoapify.com/v1/tile/carto/{z}/{x}/{y}.png?&apiKey=${GEOAPIFY_API_KEY}`,
-            ],
+            tiles: [`https://maps.geoapify.com/v1/tile/carto/{z}/{x}/{y}.png?&apiKey=${GEOAPIFY_API_KEY}`],
             tileSize: 256,
-            attribution:
-              '© <a href="https://www.geoapify.com/">Geoapify</a> contributors',
+            attribution: '© <a href="https://www.geoapify.com/">Geoapify</a> contributors',
           },
         },
         layers: [
@@ -62,18 +54,18 @@ export default function MapComponent({
       },
       center: [center.lng, center.lat],
       zoom,
-    });
+    })
 
-    mapRef.current = map;
+    mapRef.current = map
 
     // Clean up on unmount
     return () => {
       if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
+        mapRef.current.remove()
+        mapRef.current = null
       }
-    };
-  }, [center, zoom]);
+    }
+  }, [center, zoom])
 
   return (
     <div
@@ -86,5 +78,5 @@ export default function MapComponent({
         boxShadow: "0 2px 16px #ccc",
       }}
     />
-  );
+  )
 }
