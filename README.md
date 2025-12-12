@@ -1,20 +1,20 @@
 # ✈️ VoyaGenie – AI-Powered Travel Itinerary Planner
 
-VoyaGenie is a smart travel assistant that takes one simple input from the user — like "Goa, 3 people, next weekend" — and generates a complete travel itinerary. It includes flights, hotels, places to visit, local food, and experiences, all powered by real-time data and AI.
+VoyaGenie is a smart travel assistant that takes one simple input from the user — like "Goa, 3 people, next weekend" — and generates a complete travel itinerary. It includes AI-generated flight suggestions, hotel recommendations, places to visit, local food, and experiences, all powered by Google Gemini AI.
 
 ---
 
 ## 🌟 Features
 
-- 🧠 One-line trip planning using NLP
-- ✈️ Flight suggestions (via API)
-- 🏨 Hotel search with filters and booking options
+- 🧠 AI-powered trip planning with natural language input
+- ✈️ AI-generated flight suggestions
+- 🏨 AI-generated hotel recommendations
 - 📍 Must-visit spots and local experiences
 - 🍽️ Food, culture, and adventure recommendations
-- 🌦️ Real-time weather integration
-- 🗺️ Interactive map view (Leaflet + OpenStreetMap)
-- 💾 Save and export journey plans
-- 💱 Currency & language converter
+- 🌦️ AI-generated weather forecasts
+- 🗺️ Interactive map view (MapLibre GL + Geoapify)
+- 💾 Save and export journey plans as PDF
+- 💱 Currency converter
 - 🖼️ Destination image gallery using Pexels API
 
 ---
@@ -22,12 +22,11 @@ VoyaGenie is a smart travel assistant that takes one simple input from the user 
 ## ⚙️ Tech Stack
 
 - **Frontend:** Next.js, Tailwind CSS, React
-- **Backend:** Node.js / Express or Python (FastAPI)
-- **AI/NLP:** OpenAI GPT-4o, LangChain
-- **Maps & Places:** Leaflet.js, Geoapify
+- **AI:** Google Gemini (Generative AI)
+- **Maps:** MapLibre GL, Geoapify, Nominatim (OpenStreetMap)
 - **Images:** Pexels API
-- **Hotels/Flights:** Amadeus API / Booking APIs
-- **Weather:** OpenWeatherMap API
+- **Currency:** ExchangeRate-API
+- **PDF Export:** jsPDF
 - **Deployment:** Vercel
 
 ---
@@ -42,12 +41,14 @@ VoyaGenie is a smart travel assistant that takes one simple input from the user 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <your-repo-url>
 cd VoyaGenie
 ```
 
 2. Install dependencies:
+
 ```bash
 pnpm install
 # or
@@ -59,6 +60,7 @@ yarn install
 3. Set up environment variables (see below)
 
 4. Run the development server:
+
 ```bash
 pnpm dev
 # or
@@ -102,8 +104,8 @@ NEXT_PUBLIC_EXCHANGE_API_KEY=your_exchange_api_key_here
 2. Specify departure location, dates, and number of travelers
 3. Set your budget (optional)
 4. Click "Generate Itinerary" to create your personalized travel plan
-5. Explore flights, hotels, daily activities, food recommendations, and more
-6. Export your itinerary as PDF or save it for later
+5. Explore AI-generated flights, hotels, daily activities, food recommendations, and more
+6. Export your itinerary as PDF
 
 ---
 
@@ -153,4 +155,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - UI components from [shadcn/ui](https://ui.shadcn.com/)
 - Maps powered by [MapLibre GL](https://maplibre.org/)
 - AI powered by [Google Gemini](https://ai.google.dev/)
-
