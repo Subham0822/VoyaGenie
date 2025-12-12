@@ -2,7 +2,7 @@
   "name": "voyagenie",
   "version": "0.1.0",
   "private": true,
-  "description": "AI-Powered Travel Itinerary Planner - Generate complete travel plans with flights, hotels, and experiences",
+  "description": "AI-powered travel itinerary planning assistant tool",
   "author": "",
   "license": "MIT",
   "repository": {
