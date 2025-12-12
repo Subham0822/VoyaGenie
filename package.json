@@ -1,7 +1,14 @@
 {
-  "name": "my-v0-project",
+  "name": "voyagenie",
   "version": "0.1.0",
   "private": true,
+  "description": "AI-Powered Travel Itinerary Planner - Generate complete travel plans with flights, hotels, and experiences",
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
   "scripts": {
     "build": "next build",
     "dev": "next dev",
